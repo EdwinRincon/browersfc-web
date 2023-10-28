@@ -1,3 +1,18 @@
 header {
-    background-color: #282b36;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 2;
+}
+
+li:hover {
+    background:#0000001e;
+}
+
+li {
+    padding: 10px;
+    margin: 10px;
+    border-radius: 5px;
+    cursor: pointer;
 }

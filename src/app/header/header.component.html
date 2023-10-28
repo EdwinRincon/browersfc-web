@@ -1,14 +1,13 @@
-<header class="text-white py-4 px-8 bg-gradient-to-r from-brower-purple to-purple-900">
+<header class="text-white py-2 px-8 mat-elevation-z6 bg-browers-purple">
     <nav class="flex items-center justify-between">
       <div class="text-2xl font-bold bg-white rounded-sm">
         <img routerLink="/home" src="../../assets/img/browers-brand.png" alt="Rival-1" class="w-12 h-12">
       </div>
       <ul class="hidden sm:flex space-x-4">
-        <li><a href="#" class="hover:text-gray-300">Inicio</a></li>
-        <li><a href="#" class="hover:text-gray-300">Plantilla</a></li>
-        <li><a href="#" class="hover:text-gray-300">Partidos</a></li>
-        <li><a href="#" class="hover:text-gray-300">Rankings</a></li>
-        <li><a href="#" class="hover:text-gray-300">Donaciones</a></li>
+        <li><a href="#" >Inicio</a></li>
+        <li><a href="#" >Equipo</a></li>
+        <li><a href="#" >Rankings</a></li>
+        <li><a href="#" >Donaciones</a></li>
       </ul>
       <button class="sm:hidden" (click)="toggleMenu()">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
@@ -18,11 +17,10 @@
       </button>
     </nav>
     <ul class="flex flex-col space-y-4 items-center mt-4" [ngClass]="{'hidden': !(isMobile && isMenuOpen)}">
-        <li><a href="#" class="hover:text-gray-300">Inicio</a></li>
-        <li><a href="#" class="hover:text-gray-300">Plantilla</a></li>
-        <li><a href="#" class="hover:text-gray-300">Partidos</a></li>
-        <li><a href="#" class="hover:text-gray-300">Rankings</a></li>
-        <li><a href="#" class="hover:text-gray-300">Donaciones</a></li>
+        <li><a href="#" >Inicio</a></li>
+        <li><a href="#" >Equipo</a></li>
+        <li><a href="#" >Rankings</a></li>
+        <li><a href="#" >Donaciones</a></li>
     </ul>
   </header>
   
