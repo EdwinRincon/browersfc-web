@@ -1,0 +1,31 @@
+#player {
+    margin: 0 auto;
+}
+
+#player-details {
+    margin: 0 auto;
+}
+
+#player-details >div >div> p {
+   word-wrap: break-word;
+}
+
+@media (min-width: 640px) {
+    #player {
+        max-width: 70%;
+    }
+    #player-details {
+        max-width: 70%;
+    }
+}
+
+#player-logo {
+    border-radius: 50%;
+    background-color: white;
+    /* Color del fondo del círculo */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid rgb(97, 6, 158);
+    /* Color del borde del círculo */
+}

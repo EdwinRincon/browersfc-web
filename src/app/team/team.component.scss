@@ -29,35 +29,18 @@
 
 
 
-
-.example-small-box,
-.example-large-box {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 16px;
-    padding: 16px;
-    border-radius: 8px;
-}
-
-.example-small-box {
-    height: 100px;
-    width: 100px;
-}
-
-.example-large-box {
-    height: 300px;
-    width: 300px;
-}
-
 #card>div {
-    background-color: #1a1a1a;
+    background-color: #1a1a1aec;
     --tw-translate-y: 0;
     /* Establece el desplazamiento inicial en 0 */
     transition: transform 0.3s ease;
     /* Añade una transición para hacerla más suave durante 0.4 segundos */
 }
-
+mat-card{
+    background-color: #1a1a1aec;
+    color: white;
+    border: 4px solid rgb(97, 6, 158);
+}
 #card>div:hover {
     --tw-translate-y: -0.4rem;
     /* Ajusta este valor para ralentizar el desplazamiento hacia arriba */

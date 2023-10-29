@@ -13,6 +13,10 @@ import { HeaderModule } from './header/header.module';
 import { TeamRoutingModule } from './team/team-routing.module';
 import { TeamModule } from './team/team.module';
 import { MaterialModule } from './material/material.module';
+import { PlayerComponent } from './player/player.component';
+import { PlayerModule } from './player/player.module';
+import { NotFoundComponent } from './not-found/not-found.component';
+import { NotFoundModule } from './not-found/not-found.module';
 
 @NgModule({
   declarations: [
@@ -21,6 +25,7 @@ import { MaterialModule } from './material/material.module';
     FooterComponent,
     LoginComponent,
     TeamComponent,
+    PlayerComponent,
   ],
   imports: [
     BrowserModule,
@@ -30,7 +35,8 @@ import { MaterialModule } from './material/material.module';
     BrowserAnimationsModule,
     HeaderModule,
     TeamModule,
-    MaterialModule
+    PlayerModule,
+    MaterialModule,
   ],
   providers: [],
   bootstrap: [AppComponent]

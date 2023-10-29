@@ -16,13 +16,17 @@ const routes: Routes = [
     loadChildren: () => import('./team/team.module').then(m => m.TeamModule),
   },
   {
+    path:'player/:id',
+    loadChildren: () => import('./player/player.module').then(m => m.PlayerModule),
+  },
+  {
     path: '',
     redirectTo: 'home',
     pathMatch: 'full'
   },
   {
     path: '**',
-    redirectTo: 'home',
+    loadChildren: () => import('./not-found/not-found.module').then(m => m.NotFoundModule),
   }
 ];
 
