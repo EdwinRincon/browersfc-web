@@ -1,0 +1,73 @@
+#team {
+    margin: 0 auto;
+}
+
+#tabs {
+    max-width: 90%;
+    margin: 0 auto;
+}
+
+@media (min-width: 640px) {
+    #team {
+        max-width: 70%;
+    }
+    #tabs {
+        max-width: 70%;
+    }
+}
+
+#equipo-logo {
+    border-radius: 50%;
+    background-color: white;
+    /* Color del fondo del círculo */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid rgb(97, 6, 158);
+    /* Color del borde del círculo */
+}
+
+
+
+
+.example-small-box,
+.example-large-box {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 16px;
+    padding: 16px;
+    border-radius: 8px;
+}
+
+.example-small-box {
+    height: 100px;
+    width: 100px;
+}
+
+.example-large-box {
+    height: 300px;
+    width: 300px;
+}
+
+#card>div {
+    background-color: #1a1a1a;
+    --tw-translate-y: 0;
+    /* Establece el desplazamiento inicial en 0 */
+    transition: transform 0.3s ease;
+    /* Añade una transición para hacerla más suave durante 0.4 segundos */
+}
+
+#card>div:hover {
+    --tw-translate-y: -0.4rem;
+    /* Ajusta este valor para ralentizar el desplazamiento hacia arriba */
+    transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+}
+
+.match-details {
+    align-self: center;
+}
+
+.match-date-time{
+    margin-top: 5px;
+}

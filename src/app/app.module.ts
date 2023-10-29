@@ -10,6 +10,9 @@ import { LoginRoutingModule } from './login/login-routing.module';
 import { TeamComponent } from './team/team.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HeaderModule } from './header/header.module';
+import { TeamRoutingModule } from './team/team-routing.module';
+import { TeamModule } from './team/team.module';
+import { MaterialModule } from './material/material.module';
 
 @NgModule({
   declarations: [
@@ -23,8 +26,11 @@ import { HeaderModule } from './header/header.module';
     BrowserModule,
     AppRoutingModule,
     LoginRoutingModule,
+    TeamRoutingModule,
     BrowserAnimationsModule,
     HeaderModule,
+    TeamModule,
+    MaterialModule
   ],
   providers: [],
   bootstrap: [AppComponent]
