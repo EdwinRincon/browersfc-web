@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { NgModule, isDevMode } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -15,8 +15,7 @@ import { TeamModule } from './team/team.module';
 import { MaterialModule } from './material/material.module';
 import { PlayerComponent } from './player/player.component';
 import { PlayerModule } from './player/player.module';
-import { NotFoundComponent } from './not-found/not-found.component';
-import { NotFoundModule } from './not-found/not-found.module';
+import { ServiceWorkerModule } from '@angular/service-worker';
 
 @NgModule({
   declarations: [
@@ -37,6 +36,12 @@ import { NotFoundModule } from './not-found/not-found.module';
     TeamModule,
     PlayerModule,
     MaterialModule,
+    ServiceWorkerModule.register('ngsw-worker.js', {
+      enabled: !isDevMode(),
+      // Register the ServiceWorker as soon as the application is stable
+      // or after 30 seconds (whichever comes first).
+      registrationStrategy: 'registerWhenStable:30000'
+    }),
   ],
   providers: [],
   bootstrap: [AppComponent]
