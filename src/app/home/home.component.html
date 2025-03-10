@@ -1,79 +1,105 @@
-<div class="md:w-auto m-0 mx-auto home">
-  <section class="next-game">
-    <div
-      class="grid grid-cols-5 border-2 rounded banner-next-game outline outline-offset-2 outline-1 shadow-lg shadow-browers-purple max-w-6xl">
-      <div class="col-span-5 text-center"><span
-          class="inline-flex items-center rounded-md bg-purple-50 px-2 py-1 text-xs font-medium text-purple-700 ring-1 ring-inset ring-purple-700/10 mt-4">Pr&oacute;ximo
-          partido</span></div>
-      <div class="col-span-1 flex items-center justify-center"><img src="../../assets/img/browers-brand.png" /></div>
-      <div class="col-span-1 flex items-center justify-center">
-        <p class="text-[3.78rem] text-gray-900">1</p>
+<div class="container mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 pt-8 sm:pt-16">
+<!-- Next Game Section -->
+<section class="mb-8 sm:mb-12 pt-6">
+  <div class="bg-gradient-to-r from-browers-purple to-browers-blue rounded-xl shadow-lg overflow-hidden">
+    <!-- Header with League -->
+    <div class="flex items-center justify-between px-4 sm:px-6 py-2 sm:py-3 bg-black/10">
+      <h2 class="text-lg sm:text-xl font-semibold text-white">Próximo Partido</h2>
+      <div class="flex items-center">
+        <img src="../../assets/img/escudo_madrid_blanco.png" alt="League Logo" class="h-12 sm:h-16 w-auto">
       </div>
-      <div class="col-span-1 flex items-center justify-center text-xl">VS</div>
-      <div class="col-span-1 flex items-center justify-center">
-        <p class="text-[3.78rem] text-gray-900">0</p>
-      </div>
-      
-      <div class="col-span-1 flex items-center justify-center"><img src="../../assets/img/team-not-found.avif" /></div>
-      <div class="col-span-1 text-center">BrowersFC</div>
-      <div class="col-span-1 text-center"></div>
-      <div class="col-span-1 text-center"><span
-          class="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-700/10 mt-1">Polideportivo
-          Aluche</span></div>
-      <div class="col-span-1 text-center"></div>
-      <div class="col-span-1 text-center">Rival1</div>
-      <div class="col-span-5 text-center"><span
-          class="inline-flex items-center rounded-md bg-slate-50 px-2 py-1 text-xs font-medium text-slate-800 ring-1 ring-inset ring-slate-700/10 mt-1">29-10-2023
-          09:00</span></div>
-      <div class="col-span-5 text-center"><br></div>
     </div>
-    
-  </section> 
 
-  <section id="last-news">
-    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-      <div class="mx-auto max-w-2xl py-16 lg:max-w-none">
-        <h2 class="text-xl text-browers-purple">Ultimas noticias</h2>
+    <!-- Match Container -->
+    <div class="p-4 sm:p-6 bg-white">
+      <div class="flex flex-col sm:flex-row justify-between items-center">
+        <!-- Home Team -->
+        <div class="flex-1 text-center mb-4 sm:mb-0">
+          <div class="relative group cursor-pointer">
+            <img 
+              src="../../assets/img/browers-brand.png" 
+              alt="Logo BrowersFC" 
+              class="w-16 h-16 sm:w-20 sm:h-20 mx-auto object-contain transform transition-transform duration-300 group-hover:scale-110" 
+            />
+            <h3 class="mt-2 sm:mt-3 font-semibold text-base sm:text-lg text-browers-purple">BrowersFC</h3>
+          </div>
+        </div>
 
-        <div class="mt-6 space-y-12 lg:grid lg:grid-cols-3 lg:gap-x-6 lg:space-y-0">
-          <div class="group relative">
-            <div
-              class="bg-browers-blue relative h-80 w-full overflow-hidden rounded-lg sm:aspect-h-1 sm:aspect-w-2 lg:aspect-h-1 lg:aspect-w-1 group-hover:opacity-75 sm:h-64">
-              <img src="../../assets/img/noticia.jpg" alt="new1" class="h-full w-full object-center object-scale-down">
-            </div>
-            <h3 class="mt-4 text-sm text-gray-700">Cr&oacute;nica Browers VS Gal&aacute;cticos Team</h3>
-            <p class="mt-1 font-thin text-gray-900">Lorem ipsum dolor sit amet consectetur adipisicing elit. Iure magnam
-              laboriosam ipsum! Consequuntur non cumque odit at ab atque inventore quam similique possimus, tenetur aut.
-              Debitis consequatur provident eius obcaecati.</p>
+        <!-- Score and Time -->
+        <div class="flex flex-col items-center px-4 sm:px-8 mb-4 sm:mb-0">
+          <div class="flex items-center space-x-4 sm:space-x-6">
+            <span class="text-3xl sm:text-4xl font-bold text-browers-purple">0</span>
+            <span class="text-lg sm:text-xl font-medium text-browers-grey">:</span>
+            <span class="text-3xl sm:text-4xl font-bold text-browers-purple">0</span>
           </div>
-          <div class="group relative">
-            <div
-              class="relative h-80 w-full overflow-hidden rounded-lg bg-browers-blue sm:aspect-h-1 sm:aspect-w-2 lg:aspect-h-1 lg:aspect-w-1 group-hover:opacity-75 sm:h-64">
-              <img src="../../assets/img/noticia2.JPG" alt="new2"
-                class="h-full w-full object-center sm:object-scale-down">
-            </div>
-            <h3 class="mt-4 text-sm text-gray-700">Self-Improvement</h3>
-            <p class="mt-1 font-thin text-gray-900">Lorem ipsum dolor sit amet consectetur adipisicing elit. Iure magnam
-              laboriosam ipsum! Consequuntur non cumque odit at ab atque inventore quam similique possimus, tenetur aut.
-              Debitis consequatur provident eius obcaecati.</p>
+          <div class="mt-2">
+            <span class="inline-flex items-center rounded-full bg-browers-light-grey px-2 sm:px-3 py-1 text-xs sm:text-sm font-medium text-browers-purple">
+              EN VIVO
+            </span>
           </div>
-          <div class="group relative">
-            <div
-              class="relative h-80 w-full overflow-hidden rounded-lg bg-browers-blue sm:aspect-h-1 sm:aspect-w-2 lg:aspect-h-1 lg:aspect-w-1 group-hover:opacity-75 sm:h-64">
-              <img src="../../assets/img/noticia.jpg" alt="new3" class="h-full w-full object-center object-scale-down">
-            </div>
-            <h3 class="mt-4 text-sm text-gray-700">Travel</h3>
-            <p class="mt-1 font-thin text-gray-900">Lorem ipsum dolor sit amet consectetur adipisicing elit. Iure magnam
-              laboriosam ipsum! Consequuntur non cumque odit at ab atque inventore quam similique possimus, tenetur aut.
-              Debitis consequatur provident eius obcaecati.</p>
+          <div class="mt-1 text-xs sm:text-sm text-browers-grey">45'</div>
+        </div>
+
+        <!-- Away Team -->
+        <div class="flex-1 text-center">
+          <div class="relative group cursor-pointer">
+            <img 
+              src="../../assets/img/team-not-found.avif" 
+              alt="Rival" 
+              class="w-16 h-16 sm:w-20 sm:h-20 mx-auto object-contain transform transition-transform duration-300 group-hover:scale-110" 
+            />
+            <h3 class="mt-2 sm:mt-3 font-semibold text-base sm:text-lg text-browers-purple">Rival1</h3>
           </div>
         </div>
       </div>
+
+      <!-- Match Details -->
+      <div class="flex flex-col sm:flex-row justify-center items-center space-y-2 sm:space-y-0 sm:space-x-4 mt-4 sm:mt-6">
+        <div class="flex items-center text-browers-purple bg-browers-light-grey px-3 py-1.5 rounded-full w-full sm:w-auto justify-center">
+          <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+          </svg>
+          <span class="font-medium text-xs sm:text-sm">Polideportivo Aluche</span>
+        </div>
+        
+        <div class="flex items-center text-browers-grey w-full sm:w-auto justify-center">
+          <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+          </svg>
+          <span class="font-medium text-xs sm:text-sm">29-10-2023 09:00</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+  <!-- Latest News Section -->
+  <section id="last-news" class="py-8">
+    <div class="mx-auto">
+      <h2 class="text-2xl font-semibold text-browers-purple mb-6">Últimas noticias</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <ng-container *ngFor="let newsItem of newsItems">
+          <div class="group relative bg-white rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-shadow duration-300 flex flex-col h-[400px]">
+            <div class="h-48 bg-gray-200 overflow-hidden">
+              <img [src]="newsItem.image" [alt]="newsItem.title" 
+                   class="w-full h-full object-cover object-center transform transition-transform duration-300 group-hover:scale-105">
+            </div>
+            <div class="p-4 flex flex-col flex-grow">
+              <div class="flex-grow">
+                <h3 class="text-lg font-semibold text-gray-900 mb-2">{{ newsItem.title }}</h3>
+                <p class="text-gray-600 text-sm line-clamp-3">{{ newsItem.description }}</p>
+              </div>
+              <button class="mt-auto text-browers-purple hover:text-browers-blue transition-colors duration-300 text-sm font-medium flex items-center">
+                Leer más
+                <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+        </ng-container>
+      </div>
     </div>
   </section>
-
-  <section>
-
-  </section>
-
 </div>

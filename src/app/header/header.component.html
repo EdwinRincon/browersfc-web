@@ -1,26 +1,36 @@
-<header class="text-white py-2 px-8 mat-elevation-z6 bg-browers-purple">
-    <nav class="flex items-center justify-between">
-      <div class="text-2xl font-bold bg-white rounded-sm">
-        <img routerLink="/home" src="../../assets/img/browers-brand.png" alt="Rival-1" class="w-12 h-12">
-      </div>
-      <ul class="hidden sm:flex space-x-4">
-        <li><a routerLink="/home" routerLinkActive="activebutton">Inicio</a></li>
-        <li><a routerLink="/team" routerLinkActive="activebutton">Equipo</a></li>
-        <li><a href="#" >Rankings</a></li>
-        <li><a href="#" >Donaciones</a></li>
-      </ul>
-      <button class="sm:hidden" (click)="toggleMenu()">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
-          </svg>
-          
-      </button>
-    </nav>
-    <ul class="flex flex-col space-y-4 items-center mt-4" [ngClass]="{'hidden': !(isMobile && isMenuOpen)}">
-        <li><a routerLink="/home" routerLinkActive="activebutton" >Inicio</a></li>
-        <li><a routerLink="/team" routerLinkActive="activebutton">Equipo</a></li>
-        <li><a href="#" >Rankings</a></li>
-        <li><a href="#" >Donaciones</a></li>
+<header class="relative text-white py-2 px-8 mat-elevation-z6 bg-browers-purple">
+  <nav class="flex items-center justify-between">
+    <div class="text-2xl font-bold bg-white rounded-sm">
+      <img routerLink="/home" src="../../assets/img/browers-brand.png" alt="Rival-1" class="w-12 h-12">
+    </div>
+    <ul class="hidden sm:flex space-x-4">
+      <li><a routerLink="/home" routerLinkActive="activebutton" class="hover:text-gray-200 transition-colors">Inicio</a></li>
+      <li><a routerLink="/team" routerLinkActive="activebutton" class="hover:text-gray-200 transition-colors">Equipo</a></li>
+      <li><a href="#" class="hover:text-gray-200 transition-colors">Rankings</a></li>
+      <li><a href="#" class="hover:text-gray-200 transition-colors">Donaciones</a></li>
     </ul>
-  </header>
+    <button class="sm:hidden p-2 hover:bg-browers-blue rounded transition-colors" (click)="toggleMenu()">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+      </svg>
+    </button>
+  </nav>
   
+  <!-- Mobile Menu -->
+  <div class="sm:hidden absolute left-0 right-0 top-full z-50" [ngClass]="{'hidden': !(isMobile && isMenuOpen)}">
+    <ul class="flex flex-col space-y-2 bg-browers-purple shadow-lg border-t border-browers-blue py-4">
+      <li class="hover:bg-browers-blue transition-colors">
+        <a routerLink="/home" routerLinkActive="activebutton" class="block px-8 py-2">Inicio</a>
+      </li>
+      <li class="hover:bg-browers-blue transition-colors">
+        <a routerLink="/team" routerLinkActive="activebutton" class="block px-8 py-2">Equipo</a>
+      </li>
+      <li class="hover:bg-browers-blue transition-colors">
+        <a href="#" class="block px-8 py-2">Rankings</a>
+      </li>
+      <li class="hover:bg-browers-blue transition-colors">
+        <a href="#" class="block px-8 py-2">Donaciones</a>
+      </li>
+    </ul>
+  </div>
+</header>

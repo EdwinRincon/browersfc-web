@@ -3,7 +3,8 @@ header {
     top: 0;
     left: 0;
     right: 0;
-    z-index: 2;
+    z-index: 1000;
+    height: 64px;
 }
 
 li:hover {
