@@ -15,9 +15,9 @@
       "prefix": "app",
       "architect": {
         "build": {
-          "builder": "@angular-builders/custom-webpack:browser-esbuild",
+          "builder": "@angular-builders/custom-webpack:browser",
           "options": {
-            "outputPath": "dist/browersweb",
+            "outputPath": "dist/browersweb/browser",
             "index": "src/index.html",
             "polyfills": ["zone.js"],
             "tsConfig": "tsconfig.app.json",
@@ -37,7 +37,8 @@
               "src/styles.scss"
             ],
             "scripts": [],
-            "serviceWorker": "ngsw-config.json",
+            "serviceWorker": true,
+            "ngswConfigPath": "ngsw-config.json",
             "main": "src/main.ts",
             "customWebpackConfig": {
               "path": "./custom-webpack.config.js"
