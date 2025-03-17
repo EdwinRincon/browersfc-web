@@ -23,7 +23,7 @@ export class LoginComponent {
   onSubmit() {
     if (this.loginForm.valid) {
       const { username, password } = this.loginForm.value;
-      // Maneja el inicio de sesión con username y password
+
     }
   }
 }

@@ -5,7 +5,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatDividerModule } from '@angular/material/divider';
 import { RouterModule } from '@angular/router';
 import { ReactiveFormsModule } from '@angular/forms';
-
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 @NgModule({
   imports: [
     RouterModule,
@@ -14,6 +14,8 @@ import { ReactiveFormsModule } from '@angular/forms';
     MatTabsModule,
     MatCardModule,
     MatDividerModule,
+    MatSnackBarModule
+    
   ],
   exports: [
     RouterModule,
@@ -22,6 +24,7 @@ import { ReactiveFormsModule } from '@angular/forms';
     MatTabsModule,
     MatCardModule,
     MatDividerModule,
+    MatSnackBarModule
   ]
 })
 export class MaterialModule { }

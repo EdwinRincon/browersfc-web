@@ -1,34 +1,36 @@
-<footer class="text-white bg-browers-purple">
-    <div class="container mx-auto py-8 px-4 lg:px-8">
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
-        <div>
-          <h4 class="text-lg font-semibold mb-4">Sobre Browers FC</h4>
-          <p class="text-white">Somos un equipo de fútbol apasionado por el juego y comprometido con la excelencia deportiva.</p>
-        </div>
-        <div>
-          <h4 class="text-lg font-semibold mb-4">Enlaces Rápidos</h4>
-          <ul class="space-y-2">
-            <li><a href="#" class="text-white hover:text-gray-200">Inicio</a></li>
-            <li><a href="#" class="text-white hover:text-gray-200">Plantilla</a></li>
-            <li><a href="#" class="text-white hover:text-gray-200">Partidos</a></li>
-            <li><a href="#" class="text-white hover:text-gray-200">Noticias</a></li>
-          </ul>
-        </div>
-        <div>
-          <h4 class="text-lg font-semibold mb-4">Contáctanos</h4>
-          <p class="text-white"><i class="fa-solid fa-square-envelope"></i> info&#64;browersfc.com</p>
-          <p class="text-white"><i class="fa-brands fa-twitter"></i> &#64;BrowersFC</p>
-          <p class="text-white"><i class="fa-brands fa-instagram"></i> &#64;browers_fc</p>
-        </div>
-        <div>
-          <h4 class="text-lg font-semibold mb-4">Usuarios</h4>
-          <ul class="space-y-2">
-            <li><a routerLink="/login" class="text-white hover:text-gray-200">Iniciar Sesión</a></li>
-            <li><a href="#" class="text-white hover:text-gray-200">Registrarse</a></li>
-          </ul>
-        </div>
+<footer class="text-browers-white bg-browers-deep-purple">
+  <div class="container mx-auto py-8 px-4 lg:px-8">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+      <div>
+        <h4 class="text-lg font-semibold mb-4">Sobre Browers FC</h4>
+        <p class="text-white">Somos un equipo de fútbol apasionado por el juego y comprometido con la excelencia
+          deportiva.</p>
       </div>
-      <hr class="border-white my-8">
-      <p class="text-center text-white text-sm">&copy; {{ currentYear }} Browers FC. Todos los derechos reservados.</p>
+      <div>
+        <h4 class="text-lg font-semibold mb-4">Enlaces Rápidos</h4>
+        <ul class="space-y-2">
+          <li><a href="#" class="text-browers-white hover:text-browers-grey">Inicio</a></li>
+          <li><a href="#" class="text-white hover:text-gray-200">Plantilla</a></li>
+          <li><a href="#" class="text-white hover:text-gray-200">Partidos</a></li>
+          <li><a href="#" class="text-white hover:text-gray-200">Noticias</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="text-lg font-semibold mb-4">Contáctanos</h4>
+        <p class="text-white"><i class="fa-solid fa-square-envelope"></i> info&#64;browersfc.com</p>
+        <p class="text-white"><i class="fa-brands fa-twitter"></i> &#64;BrowersFC</p>
+        <p class="text-white"><i class="fa-brands fa-instagram"></i> &#64;browers_fc</p>
+      </div>
+      <div>
+        <h4 class="text-lg font-semibold mb-4">Usuarios</h4>
+        <ul class="space-y-2">
+          <li><a [routerLink]="['/login']" [fragment]="'top'" class="text-white hover:text-gray-200">Iniciar Sesión</a>
+          </li>
+          <li><a href="#" class="text-white hover:text-gray-200">Registrarse</a></li>
+        </ul>
+      </div>
     </div>
-  </footer>
+    <hr class="border-white my-8">
+    <p class="text-center text-white text-sm">&copy; {{ currentYear }} Browers FC. Todos los derechos reservados.</p>
+  </div>
+</footer>

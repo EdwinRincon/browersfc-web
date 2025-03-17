@@ -1,61 +1,60 @@
 <div class="container mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 pt-8 sm:pt-16">
-<!-- Next Game Section -->
-<section class="mb-8 sm:mb-12 pt-6">
-  <div class="bg-gradient-to-r from-browers-purple to-browers-blue rounded-xl shadow-lg overflow-hidden">
-    <!-- Header with League -->
-    <div class="flex items-center justify-between px-4 sm:px-6 py-2 sm:py-3 bg-black/10">
-      <h2 class="text-lg sm:text-xl font-semibold text-white">Próximo Partido</h2>
+<section class="mb-8 sm:mb-12 sm-max:mt-4 pt-6">
+  <div class="bg-gradient-to-r from-browers-deep-purple to-browers-purple rounded-xl shadow-lg overflow-hidden">
+    <div class="flex items-center justify-between px-4 sm:px-6 py-2 sm:py-3 bg-black/20">
+      <h2 class="text-lg sm:text-xl font-semibold text-browers-white">Próximo Partido</h2>
       <div class="flex items-center">
         <img src="../../assets/img/escudo_madrid_blanco.png" alt="League Logo" class="h-12 sm:h-16 w-auto">
       </div>
     </div>
 
     <!-- Match Container -->
-    <div class="p-4 sm:p-6 bg-white">
-      <div class="flex flex-col sm:flex-row justify-between items-center">
-        <!-- Home Team -->
-        <div class="flex-1 text-center mb-4 sm:mb-0">
+    <div class="p-4 sm:p-6 bg-browers-white">
+      <!-- Main grid container -->
+      <div class="grid grid-cols-4 gap-4 items-center mb-6">
+        <div class="text-center">
           <div class="relative group cursor-pointer">
             <img 
               src="../../assets/img/browers-brand.png" 
               alt="Logo BrowersFC" 
               class="w-16 h-16 sm:w-20 sm:h-20 mx-auto object-contain transform transition-transform duration-300 group-hover:scale-110" 
             />
-            <h3 class="mt-2 sm:mt-3 font-semibold text-base sm:text-lg text-browers-purple">BrowersFC</h3>
+            <h3 class="mt-2 font-semibold text-base sm:text-lg text-browers-deep-purple">BrowersFC</h3>
           </div>
         </div>
 
         <!-- Score and Time -->
-        <div class="flex flex-col items-center px-4 sm:px-8 mb-4 sm:mb-0">
-          <div class="flex items-center space-x-4 sm:space-x-6">
-            <span class="text-3xl sm:text-4xl font-bold text-browers-purple">0</span>
-            <span class="text-lg sm:text-xl font-medium text-browers-grey">:</span>
-            <span class="text-3xl sm:text-4xl font-bold text-browers-purple">0</span>
+        <div class="col-span-2 text-center">
+          <div class="flex justify-center items-center space-x-4">
+            <span class="text-3xl sm:text-4xl font-bold text-browers-deep-purple">0</span>
+            <span class="text-lg sm:text-xl font-medium text-browers-dark-grey">:</span>
+            <span class="text-3xl sm:text-4xl font-bold text-browers-deep-purple">0</span>
           </div>
           <div class="mt-2">
-            <span class="inline-flex items-center rounded-full bg-browers-light-grey px-2 sm:px-3 py-1 text-xs sm:text-sm font-medium text-browers-purple">
+            <span class="inline-flex items-center rounded-full bg-browers-light-purple px-3 py-1.5 text-xs sm:text-sm font-medium text-browers-white">
               EN VIVO
             </span>
           </div>
-          <div class="mt-1 text-xs sm:text-sm text-browers-grey">45'</div>
+          <div class="mt-1 text-xs sm:text-sm text-browers-dark-grey">45'</div>
         </div>
 
         <!-- Away Team -->
-        <div class="flex-1 text-center">
+        <div class="text-center">
           <div class="relative group cursor-pointer">
             <img 
               src="../../assets/img/team-not-found.avif" 
               alt="Rival" 
               class="w-16 h-16 sm:w-20 sm:h-20 mx-auto object-contain transform transition-transform duration-300 group-hover:scale-110" 
             />
-            <h3 class="mt-2 sm:mt-3 font-semibold text-base sm:text-lg text-browers-purple">Rival1</h3>
+            <h3 class="mt-2 font-semibold text-base sm:text-lg text-browers-purple">Rival1</h3>
           </div>
         </div>
       </div>
 
       <!-- Match Details -->
-      <div class="flex flex-col sm:flex-row justify-center items-center space-y-2 sm:space-y-0 sm:space-x-4 mt-4 sm:mt-6">
-        <div class="flex items-center text-browers-purple bg-browers-light-grey px-3 py-1.5 rounded-full w-full sm:w-auto justify-center">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="hidden lg:block"></div>
+        <div class="flex items-center text-browers-white bg-browers-deep-purple px-4 py-2 rounded-full justify-center hover:bg-browers-purple transition-colors duration-300">
           <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
@@ -63,34 +62,37 @@
           <span class="font-medium text-xs sm:text-sm">Polideportivo Aluche</span>
         </div>
         
-        <div class="flex items-center text-browers-grey w-full sm:w-auto justify-center">
+        <div class="flex items-center text-browers-dark-grey justify-center">
           <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
           </svg>
-          <span class="font-medium text-xs sm:text-sm">29-10-2023 09:00</span>
+          <span class="font-medium text-xs sm:text-sm">16-03-2024 09:00</span>
         </div>
+        <div class="hidden lg:block"></div>
       </div>
     </div>
   </div>
 </section>
 
-  <!-- Latest News Section -->
-  <section id="last-news" class="py-8">
-    <div class="mx-auto">
-      <h2 class="text-2xl font-semibold text-browers-purple mb-6">Últimas noticias</h2>
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        <ng-container *ngFor="let newsItem of newsItems">
-          <div class="group relative bg-white rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-shadow duration-300 flex flex-col h-[400px]">
-            <div class="h-48 bg-gray-200 overflow-hidden">
-              <img [src]="newsItem.image" [alt]="newsItem.title" 
+<!-- Latest News Section -->
+<section id="last-news" class="py-8">
+  <div class="mx-auto">
+    <h2 class="text-2xl font-semibold text-browers-deep-purple mb-6">Últimas noticias</h2>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <ng-container *ngFor="let article of articleService.articles()">
+        <div class="group relative bg-browers-white rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-shadow duration-300 flex flex-col h-[400px]">
+          <div class="h-48 bg-gray-200 overflow-hidden">
+            <img [src]="article.img_banner" [alt]="article.title" 
                    class="w-full h-full object-cover object-center transform transition-transform duration-300 group-hover:scale-105">
+          </div>
+          <div class="p-4 flex flex-col flex-grow">
+            <div class="flex-grow">
+              <h3 class="text-lg font-semibold text-browers-deep-purple mb-2">{{ article.title }}</h3>
+              <p class="text-browers-dark-grey text-sm line-clamp-3">{{ article.content }}</p>
             </div>
-            <div class="p-4 flex flex-col flex-grow">
-              <div class="flex-grow">
-                <h3 class="text-lg font-semibold text-gray-900 mb-2">{{ newsItem.title }}</h3>
-                <p class="text-gray-600 text-sm line-clamp-3">{{ newsItem.description }}</p>
-              </div>
-              <button class="mt-auto text-browers-purple hover:text-browers-blue transition-colors duration-300 text-sm font-medium flex items-center">
+            <div class="mt-auto flex justify-between items-center">
+              <span class="text-sm text-browers-dark-grey">{{ article.date | date:'mediumDate' }}</span>
+              <button class="text-browers-white bg-browers-deep-purple hover:bg-browers-purple px-4 py-2 rounded-full transition-colors duration-300 text-sm font-medium flex items-center">
                 Leer más
                 <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
@@ -98,8 +100,8 @@
               </button>
             </div>
           </div>
-        </ng-container>
-      </div>
+        </div>
+      </ng-container>
     </div>
-  </section>
-</div>
+  </div>
+</section>

@@ -1,10 +1,23 @@
-<main class="grid min-h-full place-items-center bg-white px-6 py-24 sm:py-32 lg:px-8">
-    <div class="text-center">
-      <p class="text-base font-semibold text-browers-purple">404</p>
-      <h1 class="mt-4 text-3xl font-bold tracking-tight text-gray-900 sm:text-5xl">P&aacute;gina no encontrada</h1>
-      <p class="mt-6 text-base leading-7 text-gray-600">Lo sentimos, no hemos podido encontrar la p&aacute;gina que est&aacute;s buscando.</p>
-      <div class="mt-10 flex items-center justify-center gap-x-6">
-        <a routerLink="/home" class="rounded-md bg-browers-blue px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-browers-grey focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Volver a Inicio</a>
-      </div>
+<main class="grid min-h-full place-items-center bg-browers-white px-6 py-24 sm:py-32 lg:px-8" role="main">
+  <div class="text-center">
+    <p class="text-base font-semibold text-browers-deep-purple" aria-label="Error 404">
+      404
+    </p>
+
+    <h1 class="mt-4 text-3xl font-bold tracking-tight text-browers-dark-grey sm:text-5xl">
+      Página no encontrada
+    </h1>
+
+    <p class="mt-6 text-base leading-7 text-browers-dark-grey">
+      Lo sentimos, no hemos podido encontrar la página que estás buscando.
+    </p>
+
+    <div class="mt-10 flex items-center justify-center gap-x-6">
+      <a [routerLink]="['/home']"
+        class="rounded-md bg-browers-deep-purple px-3.5 py-2.5 text-sm font-semibold text-browers-white shadow-sm hover:bg-browers-purple focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-browers-light-purple"
+        aria-label="Volver a la página de inicio">
+        Volver a Inicio
+      </a>
     </div>
+  </div>
 </main>

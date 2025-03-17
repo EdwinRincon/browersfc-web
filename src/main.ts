@@ -2,9 +2,12 @@ import { bootstrapApplication } from '@angular/platform-browser';
 import { AppComponent } from './app/app.component';
 import { provideRouter, Routes } from '@angular/router';
 import { provideAnimations } from '@angular/platform-browser/animations';
-import { importProvidersFrom, isDevMode } from '@angular/core';
-import { ServiceWorkerModule } from '@angular/service-worker';
+import { importProvidersFrom, isDevMode, inject, LOCALE_ID } from '@angular/core';
+import { ServiceWorkerModule , SwUpdate } from '@angular/service-worker';
 import { MaterialModule } from './app/material/material.module';
+import { provideHttpClient } from '@angular/common/http';
+import { registerLocaleData } from '@angular/common';
+import localeEs from '@angular/common/locales/es';
 
 
 const routes: Routes = [
@@ -16,6 +19,8 @@ const routes: Routes = [
   { path: '**', loadComponent: () => import('./app/not-found/not-found.component').then(m => m.NotFoundComponent) }
 ];
 
+registerLocaleData(localeEs);
+
 bootstrapApplication(AppComponent, {
   providers: [
     provideRouter(routes),
@@ -24,6 +29,17 @@ bootstrapApplication(AppComponent, {
     importProvidersFrom(ServiceWorkerModule.register('ngsw-worker.js', {
       enabled: !isDevMode(),
       registrationStrategy: 'registerWhenStable:30000'
-    }))
+    })),
+    provideHttpClient(),
+    { provide: LOCALE_ID, useValue: 'es' }
   ]
+}).then(() => {
+  if ('serviceWorker' in navigator && !isDevMode()) {
+    const swUpdate = inject(SwUpdate);
+    swUpdate.versionUpdates.subscribe(() => {
+      // Forzar recarga automática cuando haya una nueva versión
+      console.log('Nueva versión detectada. Recargando...');
+      window.location.reload();
+    });
+  }
 }).catch(err => console.error(err));
