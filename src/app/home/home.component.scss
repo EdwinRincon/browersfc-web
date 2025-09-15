@@ -21,9 +21,9 @@
         text-align: center;
 
         img {
-          max-width: 5rem; // TamaÒo m·ximo para pantallas grandes
-          @apply sm:max-w-[3rem]; // TamaÒo m·ximo para pantallas pequeÒas
-          height: auto; // Mantiene la proporciÛn
+          max-width: 5rem; // Tama√±o m√°ximo para pantallas grandes
+          @apply sm:max-w-[3rem]; // Tama√±o m√°ximo para pantallas peque√±as
+          height: auto; // Mantiene la proporci√≥n
         }
       }
 
@@ -33,7 +33,7 @@
         justify-content: center;
 
         p {
-          font-size: 3rem; // Ajusta el tamaÒo del n˙mero
+          font-size: 3rem; // Ajusta el tama√±o del n√∫mero
           color: #4a4a4a; // Color del texto
         }
       }
