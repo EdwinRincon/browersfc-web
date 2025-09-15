@@ -17,20 +17,22 @@
   </nav>
   
   <!-- Mobile Menu -->
-  <div class="sm:hidden absolute left-0 right-0 top-full z-50 bg-browers-deep-purple" [ngClass]="{'hidden': !(isMobile && isMenuOpen)}">
-    <ul class="flex flex-col space-y-1 shadow-lg border-t border-browers-purple py-4">
-      <li class="hover:bg-browers-purple transition-colors">
-        <a routerLink="/home" routerLinkActive="activebutton" class="block px-8 py-2">Inicio</a>
-      </li>
-      <li class="hover:bg-browers-blue transition-colors">
-        <a routerLink="/team" routerLinkActive="activebutton" class="block px-8 py-2">Equipo</a>
-      </li>
-      <li class="hover:bg-browers-blue transition-colors">
-        <a href="#" class="block px-8 py-2">Rankings</a>
-      </li>
-      <li class="hover:bg-browers-blue transition-colors">
-        <a href="#" class="block px-8 py-2">Donaciones</a>
-      </li>
-    </ul>
-  </div>
+  @if (showMobileMenu()) {
+    <div class="sm:hidden absolute left-0 right-0 top-full z-50 bg-browers-deep-purple">
+      <ul class="flex flex-col space-y-1 shadow-lg border-t border-browers-purple py-4">
+        <li class="hover:bg-browers-purple transition-colors">
+          <a routerLink="/home" routerLinkActive="activebutton" class="block px-8 py-2">Inicio</a>
+        </li>
+        <li class="hover:bg-browers-blue transition-colors">
+          <a routerLink="/team" routerLinkActive="activebutton" class="block px-8 py-2">Equipo</a>
+        </li>
+        <li class="hover:bg-browers-blue transition-colors">
+          <a href="#" class="block px-8 py-2">Rankings</a>
+        </li>
+        <li class="hover:bg-browers-blue transition-colors">
+          <a href="#" class="block px-8 py-2">Donaciones</a>
+        </li>
+      </ul>
+    </div>
+  }
 </header>

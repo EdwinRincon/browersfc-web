@@ -1,4 +1,4 @@
-import { Component, HostListener, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal, computed, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 
@@ -6,21 +6,26 @@ import { RouterModule } from '@angular/router';
   selector: 'app-header',
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss'],
-  standalone: true,
-  imports: [CommonModule, RouterModule]
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [CommonModule, RouterModule],
+  host: {
+    '(window:resize)': 'onResize($event)'
+  }
 })
-export class HeaderComponent implements OnInit{
-  isMenuOpen = false;
-  isMobile = false;
+export class HeaderComponent implements OnInit {
+  protected readonly isMenuOpen = signal(false);
+  protected readonly isMobile = signal(false);
+  
+  // Computed property to determine if mobile menu should be shown
+  protected readonly showMobileMenu = computed(() => this.isMobile() && this.isMenuOpen());
 
-  toggleMenu(): void {
-    this.isMenuOpen = !this.isMenuOpen;
+  protected toggleMenu(): void {
+    this.isMenuOpen.update(isOpen => !isOpen);
   }
 
-  @HostListener('window:resize', ['$event'])
-  onResize(event: any): void {
-    if (!this.isMobile) {
-      this.isMenuOpen = false;
+  protected onResize(event: Event): void {
+    if (!this.isMobile()) {
+      this.isMenuOpen.set(false);
     }
     this.checkMobile();
   }
@@ -29,8 +34,7 @@ export class HeaderComponent implements OnInit{
     this.checkMobile();
   }
 
-  checkMobile(): void {
-    this.isMobile = window.innerWidth < 640;
+  private checkMobile(): void {
+    this.isMobile.set(window.innerWidth < 640);
   }
-
 }
