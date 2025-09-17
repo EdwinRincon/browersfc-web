@@ -5,7 +5,7 @@ import { MaterialModule } from '../material/material.module';
 @Component({
   selector: 'app-player',
   templateUrl: './player.component.html',
-  styleUrls: ['./player.component.scss'],
+  styleUrls: ['./player.component.css'],
   imports: [CommonModule, MaterialModule],
   changeDetection: ChangeDetectionStrategy.OnPush
 })

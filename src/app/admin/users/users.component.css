@@ -18,7 +18,7 @@
 
 .error-message {
   width: fit-content;
-  color: #dc2626; // Red for error messages
+  color: #dc2626; /* Red for error messages */
   padding: 12px;
   background-color: rgba(220, 38, 38, 0.1);
   border-radius: 6px;
@@ -36,7 +36,7 @@
 .table-container {
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
-  border: 1px solid #E3E3E3; // browers-light-grey
+  border: 1px solid #E3E3E3; /* browers-light-grey */
   border-radius: 8px;
   
   @media (min-width: 768px) {
@@ -46,7 +46,7 @@
 
 .users-table {
   width: 100%;
-  min-width: 700px; // Reduced for mobile - all columns still visible
+  min-width: 700px; /* Reduced for mobile - all columns still visible */
   
   @media (min-width: 768px) {
     min-width: 900px;
@@ -56,9 +56,9 @@
     min-width: 1100px;
   }
   
-  // Responsive column width adjustments
+  /* Responsive column width adjustments */
   ::ng-deep {
-    // Mobile: tighter spacing, smaller text
+    /* Mobile: tighter spacing, smaller text */
     @media (max-width: 767px) {
       .mat-mdc-header-cell,
       .mat-mdc-cell {
@@ -75,7 +75,7 @@
         }
       }
       
-      // Specific column adjustments for mobile
+      /* Specific column adjustments for mobile */
       .mat-column-id {
         max-width: 80px;
         font-size: 10px;
@@ -102,7 +102,7 @@
       }
     }
     
-    // Tablet: balanced spacing
+    /* Tablet: balanced spacing */
     @media (min-width: 768px) and (max-width: 1023px) {
       .mat-mdc-header-cell,
       .mat-mdc-cell {
@@ -111,7 +111,7 @@
       }
     }
     
-    // Desktop: comfortable spacing
+    /* Desktop: comfortable spacing */
     @media (min-width: 1024px) {
       .mat-mdc-header-cell,
       .mat-mdc-cell {
@@ -123,20 +123,20 @@
 }
 
 ::ng-deep .mat-mdc-row:hover {
-  background-color: rgba(227, 227, 227, 0.3); // browers-light-grey with opacity
+  background-color: rgba(227, 227, 227, 0.3); /* browers-light-grey with opacity */
   transition: background-color 0.15s ease-in-out;
 }
 
-// Role badges with responsive sizing using custom colors
+/* Role badges with responsive sizing using custom colors */
 .admin-badge {
-  background-color: #5B0888; // browers-purple
-  color: #FFFFFF; // browers-white
+  background-color: #5B0888; /* browers-purple */
+  color: #FFFFFF; /* browers-white */
   padding: 2px 6px;
   border-radius: 4px;
   font-size: 10px;
   text-transform: uppercase;
   font-weight: 500;
-  border: 1px solid transparent; // For high contrast mode
+  border: 1px solid transparent; /* For high contrast mode */
   
   @media (min-width: 768px) {
     padding: 4px 8px;
@@ -145,14 +145,14 @@
 }
 
 .user-badge {
-  background-color: #A44DFF; // browers-lavender
-  color: #FFFFFF; // browers-white
+  background-color: #A44DFF; /* browers-lavender */
+  color: #FFFFFF; /* browers-white */
   padding: 2px 6px;
   border-radius: 4px;
   font-size: 10px;
   text-transform: uppercase;
   font-weight: 500;
-  border: 1px solid transparent; // For high contrast mode
+  border: 1px solid transparent; /* For high contrast mode */
   
   @media (min-width: 768px) {
     padding: 4px 8px;
@@ -163,7 +163,7 @@
 .no-data-message {
   text-align: center;
   padding: 16px;
-  color: #717171; // browers-steel-grey
+  color: #717171; /* browers-steel-grey */
   font-style: italic;
   font-size: 14px;
   
@@ -173,7 +173,7 @@
   }
 }
 
-// Responsive action buttons
+/* Responsive action buttons */
 ::ng-deep .mat-mdc-icon-button {
   @media (max-width: 767px) {
     width: 32px;
@@ -199,7 +199,7 @@
   }
 }
 
-// Responsive paginator
+/* Responsive paginator */
 ::ng-deep .mat-mdc-paginator {
   @media (max-width: 767px) {
     font-size: 12px;
@@ -219,10 +219,10 @@
   }
 }
 
-// Mobile card styles
+/* Mobile card styles */
 .mobile-cards-container {
   @media (min-width: 768px) {
-    display: none; // Hide on desktop
+    display: none; /* Hide on desktop */
   }
 }
 
@@ -234,15 +234,15 @@
   }
 }
 
-// Skeleton loader styles with brand colors
+/* Skeleton loader styles with brand colors */
 .skeleton-table {
-  border: 1px solid #E3E3E3; // browers-light-grey
+  border: 1px solid #E3E3E3; /* browers-light-grey */
   border-radius: 8px;
   overflow: hidden;
 }
 
 .skeleton-header {
-  border-bottom: 1px solid #E3E3E3; // browers-light-grey
+  border-bottom: 1px solid #E3E3E3; /* browers-light-grey */
 }
 
 .skeleton-row {
@@ -257,14 +257,14 @@
 .skeleton-text,
 .skeleton-badge,
 .skeleton-button {
-  background: linear-gradient(90deg, #E3E3E3 25%, #AAAAAA 50%, #E3E3E3 75%); // browers-light-grey to browers-silver
+  background: linear-gradient(90deg, #E3E3E3 25%, #AAAAAA 50%, #E3E3E3 75%); /* browers-light-grey to browers-silver */
   background-size: 200% 100%;
   animation: skeleton-loading 1.5s infinite;
 }
 
 .skeleton-cards {
   @media (min-width: 768px) {
-    display: none; // Hide skeleton cards on desktop
+    display: none; /* Hide skeleton cards on desktop */
   }
 }
 
@@ -272,7 +272,7 @@
   .skeleton-text,
   .skeleton-badge,
   .skeleton-button {
-    background: linear-gradient(90deg, #E3E3E3 25%, #AAAAAA 50%, #E3E3E3 75%); // browers-light-grey to browers-silver
+    background: linear-gradient(90deg, #E3E3E3 25%, #AAAAAA 50%, #E3E3E3 75%); /* browers-light-grey to browers-silver */
     background-size: 200% 100%;
     animation: skeleton-loading 1.5s infinite;
   }
@@ -287,26 +287,26 @@
   }
 }
 
-// Accessibility focus styles with brand colors
+/* Accessibility focus styles with brand colors */
 button:focus-visible,
 .mat-mdc-button:focus-visible,
 .mat-mdc-icon-button:focus-visible {
-  outline: 2px solid #3A0E5F; // browers-deep-purple for better contrast
+  outline: 2px solid #3A0E5F; /* browers-deep-purple for better contrast */
   outline-offset: 2px;
-  box-shadow: 0 0 0 3px rgba(58, 14, 95, 0.2); // browers-deep-purple with opacity
+  box-shadow: 0 0 0 3px rgba(58, 14, 95, 0.2); /* browers-deep-purple with opacity */
 }
 
-// Enhanced hover states with brand colors
+/* Enhanced hover states with brand colors */
 .mat-mdc-icon-button:hover {
-  background-color: rgba(125, 57, 196, 0.08); // browers-light-purple with low opacity
+  background-color: rgba(125, 57, 196, 0.08); /* browers-light-purple with low opacity */
   transition: background-color 0.2s ease-in-out;
 }
 
-// High contrast mode support with improved visibility
+/* High contrast mode support with improved visibility */
 @media (prefers-contrast: high) {
   .admin-badge,
   .user-badge {
-    border: 2px solid #0C0C0C; // browers-black for maximum contrast
+    border: 2px solid #0C0C0C; /* browers-black for maximum contrast */
     font-weight: 600;
   }
   
@@ -314,16 +314,16 @@ button:focus-visible,
   .skeleton-text,
   .skeleton-badge,
   .skeleton-button {
-    border: 1px solid #717171; // browers-steel-grey for visibility
-    background: #AAAAAA; // browers-silver solid background
+    border: 1px solid #717171; /* browers-steel-grey for visibility */
+    background: #AAAAAA; /* browers-silver solid background */
   }
   
-  // Enhanced focus indicators for high contrast
+  /* Enhanced focus indicators for high contrast */
   button:focus-visible,
   .mat-mdc-button:focus-visible,
   .mat-mdc-icon-button:focus-visible {
-    outline: 3px solid #0C0C0C; // browers-black
+    outline: 3px solid #0C0C0C; /* browers-black */
     outline-offset: 2px;
-    box-shadow: 0 0 0 6px #FFFFFF; // browers-white halo
+    box-shadow: 0 0 0 6px #FFFFFF; /* browers-white halo */
   }
 }

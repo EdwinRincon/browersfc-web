@@ -27,7 +27,7 @@ import { UserResponse, ApiSuccessResponse, PaginatedResponse, PaginationParams, 
     MatTooltipModule
   ],
   templateUrl: './users.component.html',
-  styleUrls: ['./users.component.scss'],
+  styleUrls: ['./users.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class UsersComponent implements OnInit, AfterViewInit {

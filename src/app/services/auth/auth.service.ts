@@ -2,7 +2,7 @@ import { Injectable, signal, computed, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { Observable, throwError } from 'rxjs';
-import { catchError, tap, map } from 'rxjs/operators';
+import { catchError, tap, map, timeout } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 import { UserResponse, GoogleAuthUrlResponse, ApiSuccessResponse } from '../../core/interfaces';
 
@@ -52,6 +52,7 @@ export class AuthService {
     }
 
     return this.http.get<ApiSuccessResponse<GoogleAuthUrlResponse>>(`${this.baseUrl}/users/auth/google`).pipe(
+      timeout(10000), // 10 second timeout
       map((res) => res.data),
       catchError(this.handleError)
     );
@@ -60,17 +61,17 @@ export class AuthService {
   /**
    * Start login with Google
    */
-  loginWithGoogle(): void {
-    this.getGoogleAuthUrl().subscribe({
-      next: ({ url }) => {
+  loginWithGoogle(): Observable<void> {
+    return this.getGoogleAuthUrl().pipe(
+      tap(({ url }) => {
         if (!url) {
-          this.handleError(new Error('Google OAuth URL is missing'));
-          return;
+          throw new Error('Google OAuth URL is undefined');
         }
         window.location.href = url;
-      },
-      error: (err) => this.handleError(err)
-    });
+      }),
+      map(() => void 0),
+      catchError(this.handleError)
+    );
   }
 
   /**
@@ -122,16 +123,34 @@ export class AuthService {
 
   private handleError(error: any): Observable<never> {
     let message = 'An unexpected error occurred';
+    let errorType = 'unknown';
 
-    if (error.error instanceof ErrorEvent) {
-      message = `Client error: ${error.error.message}`;
+    if (error.name === 'TimeoutError') {
+      message = 'Timeout: The request took too long to complete';
+      errorType = 'timeout';
+    } else if (error.error instanceof ErrorEvent) {
+      // Client-side or network error
+      message = `Network error: ${error.error.message}`;
+      errorType = 'network';
+    } else if (error.status === 0) {
+      // Backend is down or unreachable
+      message = 'Unable to connect to server. Please check your internet connection.';
+      errorType = 'network';
     } else if (error.status) {
-      message = `Server error: ${error.status} - ${error.statusText || ''} ${error.error?.message || ''}`;
+      // Backend returned an error response
+      const statusText = error.statusText || 'Unknown error';
+      const serverMessage = error.error?.message || '';
+      message = `Server error: ${error.status} - ${statusText} ${serverMessage}`.trim();
+      errorType = error.status >= 500 ? 'server' : 'client';
     } else if (error.message) {
       message = error.message;
     }
 
     console.error('[AuthService Error]', message, error);
-    return throwError(() => ({ message, originalError: error }));
+    return throwError(() => ({ 
+      message, 
+      originalError: error,
+      errorType 
+    }));
   }
 }

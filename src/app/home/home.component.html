@@ -1,8 +1,8 @@
-<div class="container mx-auto max-w-screen-xl px-4 sm:px-6 lg:px-8 pt-8 sm:pt-16">
+<div class="container mx-auto max-w-[var(--breakpoint-xl)] px-4 sm:px-6 lg:px-8 pt-8 sm:pt-16">
 
   <!-- Próximo Partido -->
-  <section class="mb-8 sm:mb-12 sm-max:mt-4 pt-6">
-    <article class="bg-gradient-to-r from-browers-deep-purple to-browers-purple rounded-xl shadow-lg overflow-hidden">
+  <section class="mb-8 sm:mb-12 mt-4 sm:mt-0 pt-6">
+    <article class="bg-linear-to-r from-browers-deep-purple to-browers-purple rounded-xl shadow-lg overflow-hidden">
       
       <!-- Header -->
       <header class="flex items-center justify-between px-4 sm:px-6 py-2 sm:py-3 bg-black/20">
@@ -121,8 +121,8 @@
                      loading="lazy" decoding="async" />
               </figure>
               
-              <div class="p-4 flex flex-col flex-grow">
-                <div class="flex-grow">
+              <div class="p-4 flex flex-col grow">
+                <div class="grow">
                   <h3 class="text-lg font-semibold text-browers-deep-purple mb-2 line-clamp-2">{{ article.title }}</h3>
                   <p class="text-browers-dark-grey text-sm line-clamp-3">{{ article.content }}</p>
                 </div>

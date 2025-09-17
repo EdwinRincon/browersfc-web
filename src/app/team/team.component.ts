@@ -4,7 +4,7 @@ import { MaterialModule } from '../material/material.module';
 @Component({
   selector: 'app-team',
   templateUrl: './team.component.html',
-  styleUrls: ['./team.component.scss'],
+  styleUrls: ['./team.component.css'],
   imports: [MaterialModule],
   changeDetection: ChangeDetectionStrategy.OnPush
 })

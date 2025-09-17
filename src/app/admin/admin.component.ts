@@ -11,7 +11,7 @@ import { AuthService } from '../services/auth/auth.service';
 @Component({
   selector: 'app-admin',
   templateUrl: './admin.component.html',
-  styleUrls: ['./admin.component.scss'],
+  styleUrls: ['./admin.component.css'],
   imports: [
     CommonModule,
     RouterModule,
