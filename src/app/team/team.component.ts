@@ -1,12 +1,11 @@
-import { Component } from '@angular/core';
-
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { MaterialModule } from '../material/material.module';
 
 @Component({
   selector: 'app-team',
   templateUrl: './team.component.html',
   styleUrls: ['./team.component.scss'],
-  standalone: true,
-  imports: [MaterialModule]
+  imports: [MaterialModule],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class TeamComponent { }
+export class TeamComponent {}

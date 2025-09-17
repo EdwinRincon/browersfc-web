@@ -24,13 +24,13 @@
       <div>
         <h4 class="text-lg font-semibold mb-4">Usuarios</h4>
         <ul class="space-y-2">
-          <li><a [routerLink]="['/login']" [fragment]="'top'" class="text-white hover:text-gray-200">Iniciar Sesión</a>
+          <li>
+            <a [routerLink]="['/login']" [fragment]="'top'" class="text-white hover:text-gray-200">Iniciar Sesión</a>
           </li>
-          <li><a href="#" class="text-white hover:text-gray-200">Registrarse</a></li>
         </ul>
       </div>
     </div>
     <hr class="border-white my-8">
-    <p class="text-center text-white text-sm">&copy; {{ currentYear }} Browers FC. Todos los derechos reservados.</p>
+    <p class="text-center text-white text-sm">&copy; {{ currentYear() }} Browers FC. Todos los derechos reservados.</p>
   </div>
 </footer>

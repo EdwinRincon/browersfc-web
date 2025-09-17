@@ -1,15 +1,12 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MaterialModule } from '../material/material.module';
-
 
 @Component({
   selector: 'app-player',
   templateUrl: './player.component.html',
   styleUrls: ['./player.component.scss'],
-  standalone: true,
-  imports: [CommonModule, MaterialModule]
+  imports: [CommonModule, MaterialModule],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class PlayerComponent {
-
-}
+export class PlayerComponent {}

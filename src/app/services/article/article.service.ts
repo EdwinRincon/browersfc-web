@@ -1,27 +1,28 @@
 import { HttpClient, HttpParams, HttpErrorResponse } from '@angular/common/http';
-import { Injectable, signal } from '@angular/core';
+import { Injectable, signal, inject } from '@angular/core';
 import { environment } from '../../../environments/environment';
-import { Observable, catchError, throwError, map, of } from 'rxjs';
-import { Article } from './article.interface';
-import { CacheService } from '../cache/cache.service';
-import { tap } from 'rxjs/operators';
+import { Observable, catchError, throwError, map } from 'rxjs';
+import { 
+  ArticleResponse, 
+  ArticleShort,
+  CreateArticleRequest, 
+  UpdateArticleRequest
+} from '../../core/interfaces/article.interface';
+import { 
+  ApiSuccessResponse, 
+  PaginatedResponse 
+} from '../../core/interfaces';
 
 @Injectable({
-  providedIn: 'root'  // Change to root to maintain singleton instance
+  providedIn: 'root'
 })
 export class ArticleService {
-  private readonly baseUrl = `${environment.apiUrl}/api/articles`;
-  private readonly CACHE_KEY = 'articles_cache';
-  private _isCached = false;
+  private readonly baseUrl = `${environment.API_URL}`;
+  private readonly http = inject(HttpClient);
 
-  constructor(
-    private readonly http: HttpClient,
-    private readonly cacheService: CacheService
-  ) {}
-
-  // Signals for state management
-  private readonly articlesSignal = signal<Article[]>([]);
-  private readonly selectedArticleSignal = signal<Article | null>(null);
+  // Signals for state management - using ArticleResponse for consistency
+  private readonly articlesSignal = signal<ArticleResponse[]>([]);
+  private readonly selectedArticleSignal = signal<ArticleResponse | null>(null);
 
   // Getters for the signals
   get articles() {
@@ -32,101 +33,77 @@ export class ArticleService {
     return this.selectedArticleSignal.asReadonly();
   }
 
-  // getter for isCached
-  get isCached(): boolean {
-    return this._isCached;
-  }
-
-  getAllArticles(page: number = 1, pageSize: number = 10): Observable<Article[]> {
-    const cacheKey = `${this.CACHE_KEY}_${page}_${pageSize}`;
-    const cachedData = this.cacheService.get<Article[]>(cacheKey);
-
-    if (cachedData) {
-      this._isCached = true;
-
-
-      // Check if needs background refresh
-      const entry = this.cacheService.getEntry<Article[]>(cacheKey);
-      if (entry && (entry.expiresAt - Date.now()) < 60_000) { // 1 minute left
-        this.createRequestObservable(cacheKey, page, pageSize).subscribe();
-      }
-
-      this.setArticles(cachedData);
-      return of(cachedData);
+  /**
+   * Get all articles with pagination (0-based as per backend API)
+   * @param page - 0-based page number
+   * @param pageSize - number of items per page
+   * @param sort - optional sort field
+   * @param order - optional sort order (asc/desc)
+   */
+  getAllArticles(page: number = 0, pageSize: number = 0, sort?: string, order?: 'asc' | 'desc'): Observable<ArticleResponse[]> {
+    let params = new HttpParams()
+      .set('page', page.toString())
+      .set('pageSize', pageSize.toString());
+    
+    if (sort) {
+      params = params.set('sort', sort);
+    }
+    if (order) {
+      params = params.set('order', order);
     }
 
-    return this.createRequestObservable(cacheKey, page, pageSize);
-  }
+    const finalUrl = `${this.baseUrl}/articles`;
 
-  private createRequestObservable(cacheKey: string, page: number, pageSize: number): Observable<Article[]> {
-    this._isCached = false;
-    
-
-    return this.http.get<{data: Article[]}>(this.baseUrl, {
-      params: new HttpParams()
-        .set('page', page.toString())
-        .set('pageSize', pageSize.toString())
-    }).pipe(
-      map(response => response.data),
-      tap(articles => {
-        
-        this.cacheService.set(cacheKey, articles);
+    return this.http.get<ApiSuccessResponse<PaginatedResponse<ArticleResponse>>>(finalUrl, { params }).pipe(
+      map(response => {
+        const articles = response.data.items;
         this.setArticles(articles);
+        return articles;
       }),
-      catchError(this.handleError)
+      catchError(error => {
+        return this.handleError(error);
+      })
     );
   }
 
-  // Update the invalidateCache method
-  invalidateCache(clearAll: boolean = false): void {
-    if (clearAll) {
-      console.log('Clearing all cache');
-      this.cacheService.clear();
-    } else {
-      console.log('Clearing only article cache');
-      Object.keys(localStorage)
-        .filter(key => key.includes(this.CACHE_KEY))
-        .forEach(key => {
-          console.log(`Removing cache for: ${key}`);
-          this.cacheService.delete(key);
-        });
-    }
-  }
-
-  getArticleById(id: number): Observable<Article> {
-    return this.http.get<Article>(`${this.baseUrl}/${id}`)
+  getArticleById(id: number): Observable<ArticleResponse> {
+    return this.http.get<ApiSuccessResponse<ArticleResponse>>(`${this.baseUrl}/articles/${id}`)
       .pipe(
+        map(response => response.data),
         catchError(this.handleError)
       );
   }
 
-  createArticle(article: Omit<Article, 'id' | 'created_at' | 'updated_at'>): Observable<Article> {
-    return this.http.post<Article>(this.baseUrl, article)
+  // Admin methods for future use
+  createArticle(article: CreateArticleRequest): Observable<ArticleShort> {
+    return this.http.post<ApiSuccessResponse<ArticleShort>>(`${this.baseUrl}/admin/articles`, article)
       .pipe(
+        map(response => response.data),
         catchError(this.handleError)
       );
   }
 
-  updateArticle(id: number, article: Partial<Article>): Observable<Article> {
-    return this.http.put<Article>(`${this.baseUrl}/${id}`, article)
+  updateArticle(id: number, article: UpdateArticleRequest): Observable<ArticleShort> {
+    return this.http.put<ApiSuccessResponse<ArticleShort>>(`${this.baseUrl}/admin/articles/${id}`, article)
       .pipe(
+        map(response => response.data),
         catchError(this.handleError)
       );
   }
 
   deleteArticle(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.baseUrl}/${id}`)
+    return this.http.delete<void>(`${this.baseUrl}/admin/articles/${id}`)
       .pipe(
         catchError(this.handleError)
       );
   }
 
   // Update signals methods
-  setArticles(articles: Article[]) {
+  setArticles(articles: ArticleResponse[]) {
     this.articlesSignal.set(articles);
   }
 
-  setSelectedArticle(article: Article | null) {
+  setSelectedArticle(article: ArticleResponse | null) {
     this.selectedArticleSignal.set(article);
   }
 
@@ -140,10 +117,5 @@ export class ArticleService {
       errorMessage = `Error Code: ${error.status}\nMessage: ${error.message}`;
     }
     return throwError(() => new Error(errorMessage));
-  }
-
-  refreshArticles(clearAll: boolean = false): Observable<Article[]> {
-    this.invalidateCache(clearAll);
-    return this.getAllArticles();
   }
 }

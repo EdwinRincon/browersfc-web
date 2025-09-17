@@ -1,0 +1,61 @@
+<div class="admin-container">
+  <mat-sidenav-container class="sidenav-container">
+    <mat-sidenav #sidenav [mode]="isMobile() ? 'over' : 'side'" [opened]="!isMobile()" class="sidenav">
+      <div class="sidenav-header">
+        <div class="sidenav-header-content">
+          <img [src]="getImgProfile()" alt="profile" class="sidenav-logo">
+          <p>{{ authService.currentUser()?.username || '' }}</p>
+        </div>
+      </div>
+      
+      <!-- User info section in nav-list -->
+      <mat-nav-list>
+        <!-- Navigation items -->
+        <a mat-list-item routerLink="/admin/teams" routerLinkActive="active-link">
+          <mat-icon matListItemIcon>groups</mat-icon>
+          <span matListItemTitle>Teams</span>
+        </a>
+        <a mat-list-item routerLink="/admin/players" routerLinkActive="active-link">
+          <mat-icon matListItemIcon>sports_soccer</mat-icon>
+          <span matListItemTitle>Players</span>
+        </a>
+        <a mat-list-item routerLink="/admin/matches" routerLinkActive="active-link">
+          <mat-icon matListItemIcon>event</mat-icon>
+          <span matListItemTitle>Matches</span>
+        </a>
+        <a mat-list-item routerLink="/admin/seasons" routerLinkActive="active-link">
+          <mat-icon matListItemIcon>date_range</mat-icon>
+          <span matListItemTitle>Seasons</span>
+        </a>
+        <a mat-list-item routerLink="/admin/articles" routerLinkActive="active-link">
+          <mat-icon matListItemIcon>article</mat-icon>
+          <span matListItemTitle>Articles</span>
+        </a>
+        <a mat-list-item routerLink="/admin/users" routerLinkActive="active-link">
+          <mat-icon matListItemIcon>people</mat-icon>
+          <span matListItemTitle>Users</span>
+        </a>
+        <mat-divider></mat-divider>
+          <a mat-list-item (click)="logout()" class="logout-button" aria-label="Logout from admin panel">
+            <mat-icon matListItemIcon>exit_to_app</mat-icon>
+            <span matListItemTitle>Exit</span>
+          </a>
+          <mat-divider></mat-divider>
+      </mat-nav-list>
+    </mat-sidenav>
+
+    <mat-sidenav-content class="sidenav-content">
+      <!-- Mobile menu button -->
+      <div class="mobile-header md:hidden bg-white shadow-sm border-b border-gray-200 p-4">
+        <button mat-icon-button (click)="sidenav.toggle()" class="text-browers-deep-purple">
+          <mat-icon>menu</mat-icon>
+        </button>
+        <span class="ml-3 text-lg font-semibold text-browers-deep-purple"></span>
+      </div>
+      
+      <div class="content-container p-4 md:p-6">
+        <router-outlet></router-outlet>
+      </div>
+    </mat-sidenav-content>
+  </mat-sidenav-container>
+</div>
