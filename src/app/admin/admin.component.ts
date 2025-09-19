@@ -1,12 +1,8 @@
-import { Component, ChangeDetectionStrategy, signal, OnInit, AfterViewInit } from '@angular/core';
+import { Component, ChangeDetectionStrategy, signal, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
-import { MatSidenavModule } from '@angular/material/sidenav';
-import { MatListModule } from '@angular/material/list';
-import { MatIconModule } from '@angular/material/icon';
-import { MatToolbarModule } from '@angular/material/toolbar';
-import { MatButtonModule } from '@angular/material/button';
 import { AuthService } from '../services/auth/auth.service';
+import { MaterialModule } from '../material/material.module';
+
 
 @Component({
   selector: 'app-admin',
@@ -14,29 +10,20 @@ import { AuthService } from '../services/auth/auth.service';
   styleUrls: ['./admin.component.css'],
   imports: [
     CommonModule,
-    RouterModule,
-    MatSidenavModule,
-    MatListModule,
-    MatIconModule,
-    MatToolbarModule,
-    MatButtonModule
+    MaterialModule
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
     '(window:resize)': 'onResize()'
   }
 })
-export class AdminComponent implements OnInit, AfterViewInit {
+export class AdminComponent implements OnInit {
   protected readonly isMobile = signal<boolean>(false);
 
   constructor(protected readonly authService: AuthService) {}
 
   ngOnInit(): void {
     this.checkScreenSize();
-  }
-
-  ngAfterViewInit(): void {
-    this.getImgProfile();
   }
 
   onResize(): void {

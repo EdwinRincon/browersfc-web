@@ -7,26 +7,58 @@
           <p>{{ authService.currentUser()?.username || '' }}</p>
         </div>
       </div>
-      
+
       <!-- User info section in nav-list -->
       <mat-nav-list>
         <!-- Navigation items -->
+        <a mat-list-item routerLink="/admin/seasons" routerLinkActive="active-link">
+          <mat-icon matListItemIcon>date_range</mat-icon>
+          <span matListItemTitle>Seasons</span>
+        </a>
         <a mat-list-item routerLink="/admin/teams" routerLinkActive="active-link">
           <mat-icon matListItemIcon>groups</mat-icon>
           <span matListItemTitle>Teams</span>
-        </a>
-        <a mat-list-item routerLink="/admin/players" routerLinkActive="active-link">
-          <mat-icon matListItemIcon>sports_soccer</mat-icon>
-          <span matListItemTitle>Players</span>
         </a>
         <a mat-list-item routerLink="/admin/matches" routerLinkActive="active-link">
           <mat-icon matListItemIcon>event</mat-icon>
           <span matListItemTitle>Matches</span>
         </a>
-        <a mat-list-item routerLink="/admin/seasons" routerLinkActive="active-link">
-          <mat-icon matListItemIcon>date_range</mat-icon>
-          <span matListItemTitle>Seasons</span>
+        <a mat-list-item routerLink="/admin/lineups" routerLinkActive="active-link">
+          <mat-icon matListItemIcon>reduce_capacity</mat-icon>
+          <span matListItemTitle>Lineups</span>
         </a>
+        <a mat-list-item routerLink="/admin/team_stats" routerLinkActive="active-link">
+          <mat-icon matListItemIcon>format_list_numbered_rtl</mat-icon>
+          <span matListItemTitle>Team Stats</span>
+        </a>
+        <!-- Player menu with submenu -->
+        <mat-expansion-panel >
+          <mat-expansion-panel-header class="no-padding-header">
+            <mat-panel-title>
+              <a mat-list-item routerLink="/admin/players" routerLinkActive="active-link">
+                <mat-icon matListItemIcon><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960"
+                    width="24px">
+                    <path
+                      d="m216-160-56-56 384-384H440v80h-80v-160h233q16 0 31 6t26 17l120 119q27 27 66 42t84 16v80q-62 0-112.5-19T718-476l-40-42-88 88 90 90-262 151-40-69 172-99-68-68-266 265Zm-96-280v-80h200v80H120ZM40-560v-80h200v80H40Zm739-80q-33 0-57-23.5T698-720q0-33 24-56.5t57-23.5q33 0 57 23.5t24 56.5q0 33-24 56.5T779-640Zm-659-40v-80h200v80H120Z" />
+                  </svg></mat-icon>
+                <span matListItemTitle>Players</span>
+              </a>
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+          <a mat-list-item routerLink="/admin/player_stats" routerLinkActive="active-link">
+            <mat-icon matListItemIcon>timer_10_alt_1</mat-icon>
+            <span matListItemTitle>Player Stats</span>
+          </a>
+          <a mat-list-item routerLink="/admin/player_teams" routerLinkActive="active-link">
+            <mat-icon matListItemIcon><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960"
+                width="24px">
+                <path
+                  d="M360-240ZM40-160v-112q0-34 17.5-62.5T104-378q62-31 126-46.5T360-440q32 0 64.5 3.5T489-425q-13 17-22.5 35.5T451-351q-23-5-45.5-7t-45.5-2q-56 0-111 13.5T140-306q-9 5-14.5 14t-5.5 20v32h323q4 22 11 42t18 38H40Zm320-320q-66 0-113-47t-47-113q0-66 47-113t113-47q66 0 113 47t47 113q0 66-47 113t-113 47Zm400-160q0 66-47 113t-113 47q-11 0-28-2.5t-28-5.5q27-32 41.5-71t14.5-81q0-42-14.5-81T544-792q14-5 28-6.5t28-1.5q66 0 113 47t47 113Zm-400 80q33 0 56.5-23.5T440-640q0-33-23.5-56.5T360-720q-33 0-56.5 23.5T280-640q0 33 23.5 56.5T360-560Zm0-80Zm320 440q34 0 56.5-20t23.5-60q1-34-22.5-57T680-360q-34 0-57 23t-23 57q0 34 23 57t57 23Zm0 80q-66 0-113-47t-47-113q0-66 47-113t113-47q66 0 113 47t47 113q0 23-5.5 43.5T818-198L920-96l-56 56-102-102q-18 11-38.5 16.5T680-120Z" />
+              </svg></mat-icon>
+            <span matListItemTitle>Player Teams</span>
+          </a>
+        </mat-expansion-panel>
+        <!-- End Player menu with submenu -->
         <a mat-list-item routerLink="/admin/articles" routerLinkActive="active-link">
           <mat-icon matListItemIcon>article</mat-icon>
           <span matListItemTitle>Articles</span>
@@ -36,11 +68,11 @@
           <span matListItemTitle>Users</span>
         </a>
         <mat-divider></mat-divider>
-          <a mat-list-item (click)="logout()" class="logout-button" aria-label="Logout from admin panel">
-            <mat-icon matListItemIcon>exit_to_app</mat-icon>
-            <span matListItemTitle>Exit</span>
-          </a>
-          <mat-divider></mat-divider>
+        <a mat-list-item (click)="logout()" class="logout-button" aria-label="Logout from admin panel">
+          <mat-icon matListItemIcon>exit_to_app</mat-icon>
+          <span matListItemTitle>Exit</span>
+        </a>
+        <mat-divider></mat-divider>
       </mat-nav-list>
     </mat-sidenav>
 
@@ -52,7 +84,7 @@
         </button>
         <span class="ml-3 text-lg font-semibold text-browers-deep-purple"></span>
       </div>
-      
+
       <div class="content-container p-4 md:p-6">
         <router-outlet></router-outlet>
       </div>

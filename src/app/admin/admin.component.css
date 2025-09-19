@@ -77,6 +77,12 @@
   padding-bottom: 8px;
 }
 
+.no-padding-header {
+  padding: 0 !important;
+  padding-right: 21px !important;
+}
+
+
 /* Navigation items styling with Material + Tailwind */
 ::ng-deep mat-nav-list {
   padding-top: 0;
