@@ -1,30 +1,19 @@
 import { Component, OnInit, AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, inject, signal, computed, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { MatTableModule, MatTableDataSource } from '@angular/material/table';
-import { MatPaginatorModule, PageEvent, MatPaginator } from '@angular/material/paginator';
-import { MatSortModule, Sort, MatSort } from '@angular/material/sort';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { MatCardModule } from '@angular/material/card';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatTableDataSource } from '@angular/material/table';
+import {  PageEvent, MatPaginator } from '@angular/material/paginator';
+import {  Sort, MatSort } from '@angular/material/sort';
 import { map } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 import { UserResponse, ApiSuccessResponse, PaginatedResponse, PaginationParams, ApiErrorResponse } from '../../core/interfaces';
+import { MaterialModule } from '../../material/material.module';
 
 @Component({
   selector: 'app-users',
   imports: [
     CommonModule,
-    MatTableModule,
-    MatPaginatorModule,
-    MatSortModule,
-    MatButtonModule,
-    MatIconModule,
-    MatCardModule,
-    MatProgressSpinnerModule,
-    MatTooltipModule
+    MaterialModule,
   ],
   templateUrl: './users.component.html',
   styleUrls: ['./users.component.css'],

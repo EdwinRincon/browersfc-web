@@ -1,45 +1,140 @@
-<div id="player" class="flex items-center justify-center sm:justify-start pt-20">
-  <div id="player-logo">
-    <img class="w-24" src="../../assets/img/browers-brand.png">
+<!-- Player Bio Wrapper -->
+<div class="relative max-w-6xl mx-auto px-4 sm:px-6 mt-16">
+  <!-- Player Header -->
+  <div class="flex flex-col items-center sm:flex-row sm:items-end sm:justify-between gap-6 sm:gap-10">
+    <!-- Player Info -->
+    <div class="text-center sm:text-left">
+      <!-- squad_number -->
+      <p class="text-browers-deep-purple text-5xl sm:text-6xl font-extrabold tracking-tight leading-none">
+        {{ player.squad_number }}
+      </p>
+      <!-- nick_name -->
+      <h1 class="text-browers-deep-purple text-4xl sm:text-5xl font-bold leading-snug">
+        {{ player.nick_name }}
+      </h1>
+      <!-- full_name -->
+      <p class="text-browers-charcoal text-sm sm:text-base uppercase tracking-wide">
+        {{ player.full_name }}
+      </p>
+    </div>
+    <!-- Player Image -->
+    <img 
+      src="../../assets/img/camiseta-browers-purple.jpg" 
+      alt="Foto de {{ player.nick_name }}"
+      class="w-40 sm:w-56 h-auto rounded-2xl shadow-xl backdrop-blur-md border border-browers-deep-purple object-cover mt-2" 
+      loading="lazy"
+    />
   </div>
-  <div class="ml-5">
-    <p class="pl-2 pt-1 pb-0">Jugador</p>
-    <p class="text-lg sm:text-6xl text-browers-dark-grey">{{'Joan Oblak' | uppercase}}</p>
-  </div> 
+</div>
+<!-- Career Summary -->
+<div class="max-w-6xl mx-auto px-4 sm:px-6 mt-10">
+  <div class="bg-browers-charcoal p-6 rounded-xl shadow-md">
+    <p class="text-white text-xs uppercase tracking-wide">Resumen de Carrera</p>
+    <p class="text-white text-base font-light mt-2">{{ player.career_summary }}</p>
+  </div>
 </div>
 
-<div id="player-details" class="py-10 justify-center">
-<div class="grid grid-cols-2 gap-2 pl-4">
-  <div class="">
-    <p class="text-slate-900 text-sm sm:text-lg">Edad</p>
-    <p class="text-slate-900 text-lg sm:text-3xl">17</p>
-    <mat-divider></mat-divider>
-  </div>
-  <div class="">
-    <p class="text-slate-900 text-sm sm:text-lg">Nicname</p>
-    <p class="text-slate-900 text-lg sm:text-3xl">Ultrasonic</p>
-    <mat-divider></mat-divider>
-  </div>
-  <div class="">
-    <p class="text-slate-900 text-sm sm:text-lg">Pais</p>
-    <p class="text-slate-900 text-lg sm:text-3xl">España</p>
-    <mat-divider></mat-divider>
-  </div>
+<!-- Player Info Cards -->
+<div class="max-w-6xl mx-auto px-4 sm:px-6 mt-10 grid grid-cols-2 sm:grid-cols-6 gap-6">
   
-  <div class="">
-    <p class="text-slate-900 text-sm sm:text-lg">Dorsal</p>
-    <p class="text-slate-900 text-lg sm:text-3xl">20</p>
-    <mat-divider></mat-divider>
+  <!-- Nacionalidad -->
+  <div class="backdrop-blur-md bg-browers-deep-purple p-4 rounded-xl shadow-md">
+    <p class="text-browers-white text-xs uppercase tracking-wide">Nacionalidad</p>
+    <p class="text-browers-white text-xl font-light">
+      {{ player.country }}<span *ngIf="player.country2"> / {{ player.country2 }}</span>
+    </p>
   </div>
-  <div class="">
-    <p class="text-slate-900 text-sm sm:text-lg">Partidos Jugados</p>
-    <p class="text-slate-900 text-lg sm:text-3xl">3</p>
-    <mat-divider></mat-divider>
+
+  <!-- Altura -->
+  <div class="backdrop-blur-md bg-browers-deep-purple p-4 rounded-xl shadow-md">
+    <p class="text-browers-white text-xs uppercase tracking-wide">Altura (cm)</p>
+    <p class="text-browers-white text-xl font-light">{{ player.height }}</p>
   </div>
-  <div class="">
-    <p class="text-slate-900 text-sm sm:text-lg">Goles</p>
-    <p class="text-slate-900 text-lg sm:text-3xl">7</p>
-    <mat-divider></mat-divider>
+
+  <!-- Edad -->
+  <div class="backdrop-blur-md bg-browers-deep-purple p-4 rounded-xl shadow-md">
+    <p class="text-browers-white text-xs uppercase tracking-wide">Edad</p>
+    <p class="text-browers-white text-xl font-light">{{ player.age }}</p>
+  </div>
+
+  <!-- Pie hábil -->
+  <div class="backdrop-blur-md bg-browers-deep-purple p-4 rounded-xl shadow-md">
+    <p class="text-browers-white text-xs uppercase tracking-wide">Pie hábil</p>
+    <p class="text-browers-white text-xl font-light">
+      {{ player.foot === 'D' ? 'Derecho' : player.foot === 'I' ? 'Izquierdo' : 'Ambidiestro' }}
+    </p>
+  </div>
+
+  <!-- Posición -->
+  <div class="backdrop-blur-md bg-browers-deep-purple p-4 rounded-xl shadow-md">
+    <p class="text-browers-white text-xs uppercase tracking-wide">Posición</p>
+    <p class="text-browers-white text-xl font-light">{{ player.position }}</p>
+  </div>
+
+    <!-- Partidos -->
+  <div class="bg-browers-deep-purple p-4 rounded-xl shadow-md">
+    <p class="text-white text-xs uppercase tracking-wide">Partidos</p>
+    <p class="text-white text-xl font-light">{{ player.matches }}</p>
+  </div>
+
+</div>
+
+<!-- Career Stats -->
+<div class="max-w-6xl mx-auto px-4 sm:px-6 mt-10 grid grid-cols-2 sm:grid-cols-6 gap-6">
+
+
+  <!-- Rating -->
+  <div class="bg-browers-purple p-4 rounded-xl shadow-md">
+    <p class="text-white text-xs uppercase tracking-wide">Rating</p>
+    <p class="text-white text-xl font-light">{{ player.rating }}/10</p>
+  </div>
+
+  <!-- Goles -->
+  <div class="bg-browers-purple p-4 rounded-xl shadow-md">
+    <p class="text-white text-xs uppercase tracking-wide">Goles</p>
+    <p class="text-white text-xl font-light">{{ player.goals }}</p>
+  </div>
+
+  <!-- Asistencias -->
+  <div class="bg-browers-purple p-4 rounded-xl shadow-md">
+    <p class="text-white text-xs uppercase tracking-wide">Asistencias</p>
+    <p class="text-white text-xl font-light">{{ player.assists }}</p>
+  </div>
+
+  <!-- Paradas -->
+  <div class="bg-browers-purple p-4 rounded-xl shadow-md">
+    <p class="text-white text-xs uppercase tracking-wide">Paradas</p>
+    <p class="text-white text-xl font-light">{{ player.saves }}</p>
+  </div>
+
+  <!-- MVPs -->
+  <div class="bg-browers-purple p-4 rounded-xl shadow-md">
+    <p class="text-white text-xs uppercase tracking-wide">MVPs</p>
+    <p class="text-white text-xl font-light">{{ player.mvp_count }}</p>
   </div>
 </div>
+
+<!-- Discipline -->
+<div class="max-w-6xl mx-auto px-4 sm:px-6 mt-10 mb-5 grid grid-cols-2 sm:grid-cols-3 gap-6">
+  <!-- Amarillas -->
+  <div class="bg-browers-light-purple p-4 rounded-xl shadow-md">
+    <p class="text-white text-xs uppercase tracking-wide">Tarjetas Amarillas</p>
+    <p class="text-white text-xl font-light">{{ player.y_cards }}</p>
+  </div>
+
+  <!-- Rojas -->
+  <div class="bg-browers-light-purple p-4 rounded-xl shadow-md">
+    <p class="text-white text-xs uppercase tracking-wide">Tarjetas Rojas</p>
+    <p class="text-white text-xl font-light">{{ player.r_cards }}</p>
+  </div>
+
+  <!-- Estado Físico -->
+  <div class="bg-browers-light-purple p-4 rounded-xl shadow-md">
+    <p class="text-white text-xs uppercase tracking-wide">Estado</p>
+    <p class="text-white text-xl font-light">
+      {{ player.injured ? 'Lesionado' : 'Activo' }}
+    </p>
+  </div>
 </div>
+
+

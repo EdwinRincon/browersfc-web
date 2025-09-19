@@ -1,17 +1,17 @@
 @import "tailwindcss";
 @theme {
-  --color-browers-deep-purple: #3A0E5F;
-  --color-browers-purple: #5B0888;
-  --color-browers-light-purple: #7D39C4;
-  --color-browers-lavender: #A44DFF;
-  --color-browers-grey: #8E8E8E;
-  --color-browers-dark-grey: #555555;
-  --color-browers-light-grey: #E3E3E3;
-  --color-browers-white: #FFFFFF;
-  --color-browers-black: #0C0C0C;
-  --color-browers-charcoal: #393939;
-  --color-browers-steel-grey: #717171;
-  --color-browers-silver: #AAAAAA;
+--color-browers-deep-purple: #3A0E5F;   /* Primary brand color – main CTAs, key buttons, links. Use on light backgrounds for strong contrast. AA compliant on white. */
+--color-browers-purple: #5B0888;        /* Secondary brand color – hover states, active highlights, progress bars. Slightly lighter than primary for depth. */
+--color-browers-light-purple: #7D39C4;  /* Accent color – secondary buttons, focus outlines, or subtle highlights. Ensure contrast when used on white. */
+--color-browers-lavender: #A44DFF;      /* Attention grabber – badges, highlights, graphs, or playful elements. Use sparingly for emphasis. */
+--color-browers-black: #0C0C0C;         /* Primary text color on light backgrounds. Highest legibility and contrast; use for body copy. */
+--color-browers-white: #FFFFFF;         /* Background for clean sections, or text on deep purple/black */
+--color-browers-charcoal: #2F2F2F;      /* Dark background sections (hero, footer). Maintain readability with white or lavender text. */
+--color-browers-dark-grey: #444444;     /* Secondary text (headings, labels). Good for hierarchy beyond pure black. */
+--color-browers-steel-grey: #666666;    /* Tertiary text – helper text, metadata, placeholders. Passes AA on white with 4.53:1 contrast. */
+--color-browers-silver: #B0B0B0;        /* Disabled state elements, dividers, or subtle iconography. Not for essential text (contrast too low). */
+--color-browers-light-grey: #EFEFEF;    /* Background for cards, input fields, or contrast sections. Excellent for dividing layers without harsh borders. */
+
 }
 
 /* Optional: Angular Material theme import */

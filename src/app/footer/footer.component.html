@@ -1,36 +1,66 @@
-<footer class="text-browers-white bg-browers-deep-purple">
-  <div class="container mx-auto py-8 px-4 lg:px-8">
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+<footer class="bg-browers-deep-purple text-browers-white">
+  <div class="container mx-auto py-10 px-4 lg:px-8">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+
+      <!-- About -->
       <div>
         <h4 class="text-lg font-semibold mb-4">Sobre Browers FC</h4>
-        <p class="text-white">Somos un equipo de fútbol apasionado por el juego y comprometido con la excelencia
-          deportiva.</p>
+        <p class="leading-relaxed">
+          Somos un equipo de fútbol apasionado por el juego y comprometido con la excelencia deportiva.
+        </p>
       </div>
-      <div>
+
+      <!-- Quick Links -->
+      <nav aria-label="Enlaces rápidos">
         <h4 class="text-lg font-semibold mb-4">Enlaces Rápidos</h4>
         <ul class="space-y-2">
-          <li><a href="#" class="text-browers-white hover:text-browers-grey">Inicio</a></li>
-          <li><a href="#" class="text-white hover:text-gray-200">Plantilla</a></li>
-          <li><a href="#" class="text-white hover:text-gray-200">Partidos</a></li>
-          <li><a href="#" class="text-white hover:text-gray-200">Noticias</a></li>
+          <li><a href="#" class="hover:text-browers-lavender transition-colors">Inicio</a></li>
+          <li><a href="#" class="hover:text-browers-lavender transition-colors">Plantilla</a></li>
+          <li><a href="#" class="hover:text-browers-lavender transition-colors">Partidos</a></li>
+          <li><a href="#" class="hover:text-browers-lavender transition-colors">Noticias</a></li>
         </ul>
-      </div>
-      <div>
+      </nav>
+
+      <!-- Contact -->
+      <address class="not-italic">
         <h4 class="text-lg font-semibold mb-4">Contáctanos</h4>
-        <p class="text-white"><i class="fa-solid fa-square-envelope"></i> info&#64;browersfc.com</p>
-        <p class="text-white"><i class="fa-brands fa-twitter"></i> &#64;BrowersFC</p>
-        <p class="text-white"><i class="fa-brands fa-instagram"></i> &#64;browers_fc</p>
-      </div>
+        <ul class="space-y-2">
+          <li class="flex items-center gap-2">
+            <a href="mailto:info@browersfc.com" class="hover:text-browers-lavender transition-colors">
+              info@browersfc.com
+            </a>
+          </li>
+          <li class="flex items-center gap-2">
+            <a href="https://twitter.com/BrowersFC" target="_blank" class="hover:text-browers-lavender transition-colors">
+              @BrowersFC
+            </a>
+          </li>
+          <li class="flex items-center gap-2">
+            <a href="https://instagram.com/browers_fc" target="_blank" class="hover:text-browers-lavender transition-colors">
+              @browers_fc
+            </a>
+          </li>
+        </ul>
+      </address>
+
+      <!-- User Links -->
       <div>
         <h4 class="text-lg font-semibold mb-4">Usuarios</h4>
         <ul class="space-y-2">
           <li>
-            <a [routerLink]="['/login']" [fragment]="'top'" class="text-white hover:text-gray-200">Iniciar Sesión</a>
+            <a [routerLink]="['/login']" [fragment]="'top'"
+               class="hover:text-browers-lavender transition-colors focus:outline-none focus:ring-2 focus:ring-browers-light-purple rounded">
+              Iniciar Sesión
+            </a>
           </li>
         </ul>
       </div>
     </div>
-    <hr class="border-white my-8">
-    <p class="text-center text-white text-sm">&copy; {{ currentYear() }} Browers FC. Todos los derechos reservados.</p>
+
+    <div class="border-t border-browers-light-grey mt-10 pt-6">
+      <p class="text-center text-browers-silver text-sm">
+        &copy; {{ currentYear() }} Browers FC. Todos los derechos reservados.
+      </p>
+    </div>
   </div>
 </footer>

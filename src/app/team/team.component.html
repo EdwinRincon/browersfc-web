@@ -1,157 +1,96 @@
-<div id="team" class="flex items-center pt-20 pl-4 sm:pl-0">
-  <div id="equipo-logo">
-    <img class="w-24" src="../../assets/img/browers-brand.png">
-  </div>
-  <div class="ml-5">
-    <p class="pl-2 pt-1 pb-0">Equipo</p>
-    <p class="text-lg sm:text-6xl text-browers-dark-grey">BROWERS FC</p>
-  </div> 
-</div>
+<div class="team-page-container px-4 max-w-[1400px] mx-auto min-h-screen pt-0.5 pb-16">
+  <!-- Tabs -->
+  <section class="team-content mt-8 max-w-[950px] mx-auto">
+    <mat-tab-group dynamicHeight class="w-full">
+      <!-- Squad Tab -->
+      <mat-tab label="Plantilla">
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 mt-4 justify-items-center">
+          @for (player of players(); track player.id) {
+          <!-- Player Card -->
+          <article
+            class="relative p-6 rounded-lg bg-browers-charcoal backdrop-blur-md border border-browers-purple shadow-lg transition-transform hover:-translate-y-1 hover:shadow-2xl flex flex-col items-center text-center h-[360px] min-w-[100px] max-w-full w-full">
+            <!-- Player info & Squad number -->
+            <div class="flex flex-col items-center justify-center flex-grow">
+              <h3 class="text-xl font-bold text-browers-white mb-2">
+                {{ player.nick_name }}
+              </h3>
+              <div class="text-7xl sm:text-8xl font-extrabold text-browers-white opacity-90 leading-none">
+                {{ player.squad_number }}
+              </div>
+              <p class="text-sm text-browers-silver mt-3">
+                {{ getPositionName(player.position) }}
+              </p>
+            </div>
 
-<div id="tabs">
-  <mat-tab-group dynamicHeight>
-    <mat-tab label="Plantilla">
-        <!--  -->
-        <div id="card" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 my-10 pb-20">
-          <div class="flex items-center rounded-md p-2 border-2 border-browers-blue hover:border-browers-purple shadow-md shadow-indigo-500/50">
-            <img src="../../assets/img/browers-brand.png" class="w-10 h-10 md:w-16 md:h-16">
-            <div class="ml-4">
-              <p class="text-white font-bold text-base">Portero</p>
-              <p class="text-white font-bold text-base">Jan Oblak (13)</p>
+            <!-- Stats -->
+            <div class="flex flex-wrap justify-center gap-4 text-sm text-browers-silver mt-4">
+              <span>⭐ {{ player.rating }}</span>
+              <span>⚽ {{ player.goals }}</span>
+              <span>🎯 {{ player.assists }}</span>
+              @if (player.position === 'por') {
+              <span>🥅 {{ player.saves }}</span>
+              }
             </div>
-          </div>
-          <div class="flex items-center rounded-md p-2 border-2 border-browers-blue hover:border-browers-purple shadow-md shadow-indigo-500/50">
-            <img src="../../assets/img/browers-brand.png" class="w-10 h-10 md:w-16 md:h-16">
-            <div class="ml-4">
-              <p class="text-white font-bold text-base">Portero</p>
-              <p class="text-white font-bold text-base">Jan Oblak (13)</p>
-            </div>
-          </div>
-          <div class="flex items-center rounded-md p-2 border-2 border-browers-blue hover:border-browers-purple shadow-md shadow-indigo-500/50">
-            <img src="../../assets/img/browers-brand.png" class="w-10 h-10 md:w-16 md:h-16">
-            <div class="ml-4">
-              <p class="text-white font-bold text-base">Portero</p>
-              <p class="text-white font-bold text-base">Jan Oblak (13)</p>
-            </div>
-          </div>
-          <div class="flex items-center rounded-md p-2 border-2 border-browers-blue hover:border-browers-purple shadow-md shadow-indigo-500/50">
-            <img src="../../assets/img/browers-brand.png" class="w-10 h-10 md:w-16 md:h-16">
-            <div class="ml-4">
-              <p class="text-white font-bold text-base">Portero</p>
-              <p class="text-white font-bold text-base">Jan Oblak (13)</p>
-            </div>
-          </div>
-          <div class="flex items-center rounded-md p-2 border-2 border-browers-blue hover:border-browers-purple shadow-md shadow-indigo-500/50">
-            <img src="../../assets/img/browers-brand.png" class="w-10 h-10 md:w-16 md:h-16">
-            <div class="ml-4">
-              <p class="text-white font-bold text-base">Portero</p>
-              <p class="text-white font-bold text-base">Jan Oblak (13)</p>
-            </div>
-          </div>
-          <div class="flex items-center rounded-md p-2 border-2 border-browers-blue hover:border-browers-purple shadow-md shadow-indigo-500/50">
-            <img src="../../assets/img/browers-brand.png" class="w-10 h-10 md:w-16 md:h-16">
-            <div class="ml-4">
-              <p class="text-white font-bold text-base">Portero</p>
-              <p class="text-white font-bold text-base">Jan Oblak (13)</p>
-            </div>
-          </div>
-          <div class="flex items-center rounded-md p-2 border-2 border-browers-blue hover:border-browers-purple shadow-md shadow-indigo-500/50">
-            <img src="../../assets/img/browers-brand.png" class="w-10 h-10 md:w-16 md:h-16">
-            <div class="ml-4">
-              <p class="text-white font-bold text-base">Portero</p>
-              <p class="text-white font-bold text-base">Jan Oblak (13)</p>
-            </div>
-          </div>
-          <div class="flex items-center rounded-md p-2 border-2 border-browers-blue hover:border-browers-purple shadow-md shadow-indigo-500/50">
-            <img src="../../assets/img/browers-brand.png" class="w-10 h-10 md:w-16 md:h-16">
-            <div class="ml-4">
-              <p class="text-white font-bold text-base">Portero</p>
-              <p class="text-white font-bold text-base">Jan Oblak (13)</p>
-            </div>
-          </div>
-          <div class="flex items-center rounded-md p-2 border-2 border-browers-blue hover:border-browers-purple shadow-md shadow-indigo-500/50">
-            <img src="../../assets/img/browers-brand.png" class="w-10 h-10 md:w-16 md:h-16">
-            <div class="ml-4">
-              <p class="text-white font-bold text-base">Portero</p>
-              <p class="text-white font-bold text-base">Jan Oblak (13)</p>
-            </div>
-          </div>
-          <div class="flex items-center rounded-md p-2 border-2 border-browers-blue hover:border-browers-purple shadow-md shadow-indigo-500/50">
-            <img src="../../assets/img/browers-brand.png" class="w-10 h-10 md:w-16 md:h-16">
-            <div class="ml-4">
-              <p class="text-white font-bold text-base">Portero</p>
-              <p class="text-white font-bold text-base">Jan Oblak (13)</p>
-            </div>
-          </div>
+
+            <!-- Injury badge -->
+            @if (player.injured) {
+            <span
+              class="absolute top-3 right-3 text-xs bg-red-600/90 text-white px-3 py-1 rounded-md font-medium animate-pulse shadow-md">
+              🩹 Lesionado
+            </span>
+            }
+          </article>
+          }
         </div>
-        
-        <!--  -->
-    </mat-tab>
-    <mat-tab label="Partidos">
-      <div id="partidos-cards" class="grid grid-cols-1 md:grid-cols-2 gap-5 my-10">
-       
-        <mat-card class="mat-card">
-          <div class="grid grid-cols-3">
-            <div class="team-container col-span-2">
-              <div class="team flex items-center mt-2 ml-2">
-                <img src="../../assets/img/browers-brand.png" class="w-10 h-10 md:w-16 md:h-16">
-                <p class="team-name">Nombre del Equipo 1</p>
-              </div>
-              <div class="team flex items-center mt-2 ml-2">
-                <img src="../../assets/img/browers-brand.png" class="w-10 h-10 md:w-16 md:h-16">
-                <p class="team-name">Nombre del Equipo 2</p>
-              </div>
-            </div>
-            <div class="match-details mr-2 border-l-2 border-white justify-center">
-              <p class="match-date-time text-center">2023-10-28 23:25</p>
-            </div>
-            <div class="col-span-3">
-              <p class="match-result text-center">1 - 0</p>
-            </div>
-          </div>
-        </mat-card>
-        <mat-card class="mat-card">
-          <div class="grid grid-cols-3">
-            <div class="team-container col-span-2">
-              <div class="team flex items-center mt-2 ml-2">
-                <img src="../../assets/img/browers-brand.png" class="w-10 h-10 md:w-16 md:h-16">
-                <p class="team-name">Nombre del Equipo 1</p>
-              </div>
-              <div class="team flex items-center mt-2 ml-2">
-                <img src="../../assets/img/browers-brand.png" class="w-10 h-10 md:w-16 md:h-16">
-                <p class="team-name">Nombre del Equipo 2</p>
-              </div>
-            </div>
-            <div class="match-details mr-2 border-l-2 border-white justify-center">
-              <p class="match-date-time text-center">2023-10-28 23:25</p>
-            </div>
-            <div class="col-span-3">
-              <p class="match-result text-center">1 - 0</p>
-            </div>
-          </div>
-        </mat-card>
-        <mat-card class="mat-card">
-          <div class="grid grid-cols-3">
-            <div class="team-container col-span-2">
-              <div class="team flex items-center mt-2 ml-2">
-                <img src="../../assets/img/browers-brand.png" class="w-10 h-10 md:w-16 md:h-16">
-                <p class="team-name">Nombre del Equipo 1</p>
-              </div>
-              <div class="team flex items-center mt-2 ml-2">
-                <img src="../../assets/img/browers-brand.png" class="w-10 h-10 md:w-16 md:h-16">
-                <p class="team-name">Nombre del Equipo 2</p>
-              </div>
-            </div>
-            <div class="match-details mr-2 border-l-2 border-browers-white justify-center">
-              <p class="match-date-time text-center">2023-10-28 23:25</p>
-            </div>
-            <div class="col-span-3">
-              <p class="match-result text-center">1 - 0</p>
-            </div>
-          </div>
-        </mat-card>
-      </div>
-    </mat-tab>
-  </mat-tab-group> 
-</div>
+      </mat-tab>
 
+      <!-- Matches Tab -->
+      <mat-tab label="Partidos">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-3">
+          @for (match of recentMatches(); track match.id) {
+          <article class="p-6 rounded-xl bg-browers-charcoal backdrop-blur-md border border-white/10 shadow-lg 
+          transition-transform hover:-translate-y-1 hover:shadow-xl flex flex-col justify-between 
+          aspect-[3/1] break-words">
+            <!-- Match Teams & Score -->
+            <div class="flex items-center justify-between text-browers-white">
+              <!-- Home Team -->
+              <div class="flex items-center gap-2">
+                <img src="{{ match?.home_team?.shield || '../../assets/img/browers-brand.png' }}"
+                  alt="{{ match?.home_team?.full_name || 'Team' }} shield" class="w-9 h-9 object-contain" />
+                <span class="text-sm font-medium">{{ match?.home_team?.short_name }}</span>
+              </div>
+
+              <!-- Score / Time -->
+              <div class="text-center">
+                @if (match.status === 'finished') {
+                <div class="font-bold text-xl">{{ match.home_goals }} - {{ match.away_goals }}</div>
+                } @else {
+                <div class="text-sm text-browers-silver">
+                  {{ formatKickoffTime(match.kickoff) }} · {{ formatKickoffDate(match.kickoff) }}
+                </div>
+                }
+              </div>
+
+              <!-- Away Team -->
+              <div class="flex items-center gap-2">
+                <span class="text-sm font-medium">{{ match?.away_team?.short_name }}</span>
+                <img src="{{ match?.away_team?.shield || '../../assets/img/browers-brand.png' }}"
+                  alt="{{ match?.away_team?.full_name || 'Team' }} shield" class="w-9 h-9 object-contain" />
+              </div>
+            </div>
+
+            <!-- Match Meta -->
+            <div class="flex justify-between items-center mt-4 text-xs text-browers-silver">
+              <span>{{ getStatusLabel(match.status) }}</span>
+              <span class="flex items-center gap-2">
+                @if (match.location) { <span>📍 {{ match.location }}</span> } @if (match.mvp_player)
+                { <span>🏆 {{ match.mvp_player.nick_name }}</span> }
+              </span>
+            </div>
+          </article>
+          }
+        </div>
+      </mat-tab>
+    </mat-tab-group>
+  </section>
+</div>
