@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule, NgOptimizedImage  } from '@angular/common';
 import { ArticleService } from '../services/article/article.service';
+import { ArticleResponse } from '../core/interfaces';
 
 @Component({
   selector: 'app-home',
@@ -12,10 +13,13 @@ import { ArticleService } from '../services/article/article.service';
 export class HomeComponent implements OnInit {
 
   // Modern dependency injection
-  public readonly articleService = inject(ArticleService);
+  private readonly articleService = inject(ArticleService);
 
   // Signal for loading state
   protected readonly isLoading = signal(false);
+  
+  // Signal for articles data
+  protected readonly articles = signal<ArticleResponse[]>([]);
 
   ngOnInit(): void {
     this.loadArticles();
@@ -23,10 +27,10 @@ export class HomeComponent implements OnInit {
 
   private loadArticles(): void {
     this.isLoading.set(true);
-    // Load latest 6 articles for home page (0-based pagination)
-    this.articleService.getAllArticles(0, 6)
+    this.articleService.getAllArticles()
       .subscribe({
         next: (articles) => {
+          this.articles.set(articles);
           this.isLoading.set(false);
         },
         error: () => {

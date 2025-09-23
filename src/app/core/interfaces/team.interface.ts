@@ -1,6 +1,7 @@
 /**
  * Team related interfaces
  */
+import { MatchShort } from './match.interface';
 
 /**
  * Simplified team interface
@@ -9,7 +10,6 @@ export interface TeamShort {
   id: number;
   full_name: string;
   short_name: string;
-  shield?: string;
 }
 
 /**
@@ -23,6 +23,7 @@ export interface TeamResponse {
   color2: string;
   shield: string;
   next_match_id?: number;
+  next_match?: MatchShort;
   created_at: string;
   updated_at: string;
 }

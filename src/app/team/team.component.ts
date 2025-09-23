@@ -190,14 +190,12 @@ export class TeamComponent {
       home_team: {
         id: 1,
         full_name: 'Browers FC',
-        short_name: 'BFC',
-        shield: '../../assets/img/browers-brand.png'
+        short_name: 'BFC'
       },
       away_team: {
         id: 2,
         full_name: 'Real Madrid CF',
-        short_name: 'RMA',
-        shield: ''
+        short_name: 'RMA'
       },
       season: {
         id: 1,
@@ -206,9 +204,7 @@ export class TeamComponent {
       mvp_player: {
         id: 6,
         nick_name: 'Griezmann',
-        squad_number: 7,
-        position: 'del',
-        rating: 88
+        position: 'del'
       }
     },
     {
@@ -226,14 +222,12 @@ export class TeamComponent {
       home_team: {
         id: 3,
         full_name: 'FC Barcelona',
-        short_name: 'BAR',
-        shield: ''
+        short_name: 'BAR'
       },
       away_team: {
         id: 1,
         full_name: 'Browers FC',
-        short_name: 'BFC',
-        shield: '../../assets/img/browers-brand.png'
+        short_name: 'BFC'
       },
       season: {
         id: 1,
@@ -255,14 +249,12 @@ export class TeamComponent {
       home_team: {
         id: 1,
         full_name: 'Browers FC',
-        short_name: 'BFC',
-        shield: '../../assets/img/browers-brand.png'
+        short_name: 'BFC'
       },
       away_team: {
         id: 4,
         full_name: 'Sevilla FC',
-        short_name: 'SEV',
-        shield: ''
+        short_name: 'SEV'
       },
       season: {
         id: 1,

@@ -1,12 +1,10 @@
 import { Component, OnInit, AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, inject, signal, computed, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
 import { MatTableDataSource } from '@angular/material/table';
-import {  PageEvent, MatPaginator } from '@angular/material/paginator';
-import {  Sort, MatSort } from '@angular/material/sort';
-import { map } from 'rxjs/operators';
-import { environment } from '../../../environments/environment';
-import { UserResponse, ApiSuccessResponse, PaginatedResponse, PaginationParams, ApiErrorResponse } from '../../core/interfaces';
+import { PageEvent, MatPaginator } from '@angular/material/paginator';
+import { Sort, MatSort } from '@angular/material/sort';
+import { UserResponse, PaginatedResponse, PaginationParams } from '../../core/interfaces';
+import { UserService } from '../../services/user/user.service';
 import { MaterialModule } from '../../material/material.module';
 
 @Component({
@@ -20,9 +18,9 @@ import { MaterialModule } from '../../material/material.module';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class UsersComponent implements OnInit, AfterViewInit {
-  private readonly http = inject(HttpClient);
+
+  private readonly userService = inject(UserService);
   private readonly cdr = inject(ChangeDetectorRef);
-  private readonly baseUrl = environment.API_URL;
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
@@ -41,14 +39,14 @@ export class UsersComponent implements OnInit, AfterViewInit {
 
   // Table configuration
   protected readonly displayedColumns = ['id', 'username', 'name', 'last_name', 'role_id', 'created_at', 'updated_at', 'actions'];
-  protected readonly pageSizeOptions = [5, 10, 25, 50];
+  protected readonly pageSizeOptions = [10, 25, 50];
 
   // Pagination parameters using interface
   protected readonly paginationParams = signal<PaginationParams>({
     page: 0,
-    pageSize: 5,
-    sort: 'id',
-    order: 'asc'
+    pageSize: 10,
+    sort: 'created_at',
+    order: 'desc'
   });
 
   ngOnInit(): void {
@@ -90,42 +88,22 @@ export class UsersComponent implements OnInit, AfterViewInit {
     this.error.set(null);
 
     const params = this.paginationParams();
-    const queryParams = {
-      page: params.page.toString(),
-      pageSize: params.pageSize.toString(),
-      sort: params.sort || 'id',
-      order: params.order || 'asc'
-    };
-
-    const url = `${this.baseUrl}/users`;
-
-    this.http.get<ApiSuccessResponse<PaginatedResponse<UserResponse>>>(url, { params: queryParams })
-      .pipe(
-        map((response: ApiSuccessResponse<PaginatedResponse<UserResponse>>) => response.data)
-      )
+    this.userService.getUsers(params)
       .subscribe({
         next: (response: PaginatedResponse<UserResponse>) => {
           this.dataSource.data = response.items;
           this.totalUsers.set(response.total_count);
-
-          // Update paginator to reflect current state after change detection
           setTimeout(() => {
             if (this.paginator) {
               this.paginator.pageIndex = params.page;
               this.paginator.length = response.total_count;
-              this.cdr.detectChanges(); // Force change detection
+              this.cdr.detectChanges();
             }
           }, 0);
-
           this.loading.set(false);
         },
-        error: (err: ApiErrorResponse) => {
+        error: (err) => {
           console.error('Error loading users:', err);
-          console.error('Error details:', {
-            url: err.detail,
-            code: err.code,
-            message: err.message
-          });
           this.error.set('Error loading users. Please try again.');
           this.loading.set(false);
         }
@@ -151,43 +129,43 @@ export class UsersComponent implements OnInit, AfterViewInit {
    * Handle sort change event
    */
   protected onSortChange(sort: Sort): void {
-    if (sort.direction) {
+    console.log('Sort change detected:', sort.direction);
+    if (!sort.active || sort.direction === '') {
+      // Reset to default sort (or send no sort to backend)
+      this.paginationParams.update(params => ({
+        ...params,
+        sort: 'created_at', 
+        order: 'desc'
+      }));
+    } else {
+      const order: 'asc' | 'desc' = sort.direction === 'asc' ? 'asc' : 'desc';
       this.paginationParams.update(params => ({
         ...params,
         sort: sort.active,
-        order: sort.direction as 'asc' | 'desc'
-      }));
-    } else {
-      // Default sort when direction is ''
-      this.paginationParams.update(params => ({
-        ...params,
-        sort: 'id',
-        order: 'asc'
+        order
       }));
     }
     this.loadUsers();
   }
 
   /**
-   * Update user (placeholder implementation)
+   * Update user 
    */
-  updateUser(userId: number, userData: Partial<UserResponse>): void {
-    console.log('Update user:', userId, userData);
-    // Implementation pending - will be added in future iterations
+  updateUser(userId: string, userData: Partial<UserResponse>): void {
+    //TODO: Implementation pending - will be added in future
   }
 
   /**
-   * Delete user (placeholder implementation)
+   * Delete user 
    */
-  deleteUser(userId: number): void {
-    console.log('Delete user:', userId);
-    // Implementation pending - will be added in future iterations
+  deleteUser(userId: string): void {
+    //TODO: Implementation pending - will be added in future
   }
 
   /**
    * Format date for display
    */
   formatDate(dateString: string): string {
-    return new Date(dateString).toUTCString();
+    return new Date(dateString).toLocaleDateString();
   }
 }

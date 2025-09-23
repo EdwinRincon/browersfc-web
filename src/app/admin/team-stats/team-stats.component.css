@@ -1,0 +1,177 @@
+/* Team Stats Component Styles */
+
+/* Rank badge styles */
+.top-rank-badge {
+  display: inline-flex;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  border-radius: 9999px;
+  background-color: #eab308;
+  color: white;
+}
+
+.mid-rank-badge {
+  display: inline-flex;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  border-radius: 9999px;
+  background-color: #dbeafe;
+  color: #1e40af;
+}
+
+.low-rank-badge {
+  display: inline-flex;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  border-radius: 9999px;
+  background-color: #f3f4f6;
+  color: #374151;
+}
+
+:host {
+  display: block;
+}
+
+/* Team badge styling */
+.team-badge {
+  width: 1.5rem;
+  height: 1.5rem;
+  background-color: var(--color-browers-deep-purple);
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* Season badge */
+.season-badge {
+  background-color: var(--color-browers-light-purple);
+  color: white;
+  padding: 0.25rem 0.5rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+/* Performance stats */
+.stats-wins {
+  background-color: #dcfce7;
+  color: #166534;
+}
+
+.stats-draws {
+  background-color: #fef3c7;
+  color: #d97706;
+}
+
+.stats-losses {
+  background-color: #fecaca;
+  color: #dc2626;
+}
+
+/* Shared skeleton & table utility styles (copied from users component for visual parity) */
+.skeleton-table {
+  border: 1px solid #E3E3E3; /* browers-light-grey */
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.skeleton-header {
+  border-bottom: 1px solid #E3E3E3; /* browers-light-grey */
+}
+
+.skeleton-row {
+  align-items: center;
+  
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.skeleton-cell,
+.skeleton-text,
+.skeleton-badge,
+.skeleton-button {
+  background: linear-gradient(90deg, #E3E3E3 25%, #AAAAAA 50%, #E3E3E3 75%); /* browers-light-grey to browers-silver */
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.5s infinite;
+}
+
+.skeleton-cards {
+  @media (min-width: 768px) {
+    display: none; /* Hide skeleton cards on desktop */
+  }
+}
+
+.skeleton-card {
+  .skeleton-text,
+  .skeleton-badge,
+  .skeleton-button {
+    background: linear-gradient(90deg, #E3E3E3 25%, #AAAAAA 50%, #E3E3E3 75%); /* browers-light-grey to browers-silver */
+    background-size: 200% 100%;
+    animation: skeleton-loading 1.5s infinite;
+  }
+}
+
+@keyframes skeleton-loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+.error-message {
+  width: fit-content;
+  color: #dc2626; /* Red for error messages */
+  padding: 12px;
+  background-color: rgba(220, 38, 38, 0.1);
+  border-radius: 6px;
+  border-left: 4px solid #dc2626;
+  margin: 12px 0;
+  font-size: 14px;
+  
+  @media (min-width: 768px) {
+    padding: 16px;
+    margin: 16px 0;
+    font-size: 16px;
+  }
+}
+
+
+/* Accessibility focus styles with brand colors */
+button:focus-visible,
+.mat-mdc-button:focus-visible,
+.mat-mdc-icon-button:focus-visible {
+  outline: 2px solid #3A0E5F; /* browers-deep-purple for better contrast */
+  outline-offset: 2px;
+  box-shadow: 0 0 0 3px rgba(58, 14, 95, 0.2); /* browers-deep-purple with opacity */
+}
+
+/* Enhanced hover states with brand colors */
+.mat-mdc-icon-button:hover {
+  background-color: rgba(125, 57, 196, 0.08); /* browers-light-purple with low opacity */
+  transition: background-color 0.2s ease-in-out;
+}
+
+/* High contrast mode support with improved visibility */
+@media (prefers-contrast: high) {
+  .skeleton-cell,
+  .skeleton-text,
+  .skeleton-badge,
+  .skeleton-button {
+    border: 1px solid #717171; /* browers-steel-grey for visibility */
+    background: #AAAAAA; /* browers-silver solid background */
+  }
+  
+  /* Enhanced focus indicators for high contrast */
+  button:focus-visible,
+  .mat-mdc-button:focus-visible,
+  .mat-mdc-icon-button:focus-visible {
+    outline: 3px solid #0C0C0C; /* browers-black */
+    outline-offset: 2px;
+    box-shadow: 0 0 0 6px #FFFFFF; /* browers-white halo */
+  }
+}

@@ -1,0 +1,169 @@
+<div class="p-4 lg:p-6">
+  <a class="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 bg-browers-deep-purple text-browers-white px-4 py-2 rounded z-50"
+     href="#player-stats-content">Skip to player stats content</a>
+  <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-6">
+    <div>
+      <h1 class="text-2xl lg:text-3xl font-bold text-browers-black mb-2">Player Statistics</h1>
+      <p class="text-browers-steel-grey">Track individual player performance</p>
+    </div>
+    <button mat-flat-button color="primary" class="mt-4 lg:mt-0 bg-browers-deep-purple hover:bg-browers-purple" (click)="addStats()">
+      <mat-icon>add</mat-icon>
+      Add Stats
+    </button>
+  </div>
+
+  @if (loading()) {
+    <div class="sr-only" aria-live="polite">Loading player statistics, please wait...</div>
+
+    @if (!isMobile()) {
+      <div class="skeleton-table" aria-hidden="true">
+        <div class="skeleton-header bg-browers-light-grey h-12 mb-1"></div>
+        @for (i of [1,2,3,4,5]; track i) {
+          <div class="skeleton-row flex space-x-4 h-14 p-4 border-b border-browers-light-grey">
+            <div class="skeleton-cell bg-browers-silver h-6 w-16 rounded animate-pulse"></div>
+            <div class="skeleton-cell bg-browers-silver h-6 w-24 rounded animate-pulse"></div>
+            <div class="skeleton-cell bg-browers-silver h-6 w-20 rounded animate-pulse"></div>
+            <div class="skeleton-cell bg-browers-silver h-6 w-20 rounded animate-pulse"></div>
+            <div class="skeleton-cell bg-browers-silver h-6 w-16 rounded animate-pulse"></div>
+            <div class="skeleton-cell bg-browers-silver h-6 w-20 rounded animate-pulse"></div>
+            <div class="skeleton-cell bg-browers-silver h-6 w-16 rounded animate-pulse"></div>
+          </div>
+        }
+      </div>
+    } @else {
+      <div class="skeleton-cards space-y-4" aria-hidden="true">
+        @for (i of [1,2,3]; track i) {
+          <mat-card class="skeleton-card bg-browers-white shadow-xs border border-browers-light-grey">
+            <mat-card-content class="p-4">
+              <div class="flex justify-between items-start mb-3">
+                <div class="flex-1">
+                  <div class="skeleton-text bg-browers-silver h-5 w-32 rounded animate-pulse mb-2"></div>
+                  <div class="skeleton-text bg-browers-silver h-4 w-24 rounded animate-pulse"></div>
+                </div>
+                <div class="skeleton-badge bg-browers-silver h-6 w-16 rounded-full animate-pulse"></div>
+              </div>
+
+              <div class="space-y-2 mb-4">
+                <div class="flex justify-between">
+                  <div class="skeleton-text bg-browers-silver h-4 w-8 rounded animate-pulse"></div>
+                  <div class="skeleton-text bg-browers-silver h-4 w-20 rounded animate-pulse"></div>
+                </div>
+                <div class="flex justify-between">
+                  <div class="skeleton-text bg-browers-silver h-4 w-16 rounded animate-pulse"></div>
+                  <div class="skeleton-text bg-browers-silver h-4 w-24 rounded animate-pulse"></div>
+                </div>
+              </div>
+
+              <div class="flex space-x-2">
+                <div class="skeleton-button bg-browers-silver h-9 flex-1 rounded animate-pulse"></div>
+                <div class="skeleton-button bg-browers-silver h-9 flex-1 rounded animate-pulse"></div>
+              </div>
+            </mat-card-content>
+          </mat-card>
+        }
+      </div>
+    }
+  }
+
+  @if (error(); as err) {
+    <div class="error-message flex items-center gap-2 text-red-600 mb-6" role="alert" aria-live="polite">
+      <mat-icon aria-hidden="true">error</mat-icon>
+      <span class="font-medium">Error:</span>
+      <span>{{ err }}</span>
+    </div>
+  }
+
+  @if (!loading() && !error()) {
+    <div class="bg-white rounded-lg border border-browers-light-grey overflow-hidden">
+      <table mat-table [dataSource]="dataSource"
+  matSort
+  matSortDisableClear
+  [matSortActive]="paginationParams().sort ?? 'created_at'"
+  [matSortDirection]="paginationParams().order ?? 'desc'"
+  #sort="matSort"
+  (matSortChange)="onSortChange($event)"
+  class="w-full">
+        
+        <ng-container matColumnDef="player">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header="player" class="bg-browers-light-grey text-browers-black font-semibold">Player</th>
+          <td mat-cell *matCellDef="let stats">
+            <div class="flex items-center space-x-2">
+              <div class="w-6 h-6 bg-browers-lavender rounded-full flex items-center justify-center">
+                <span class="text-white font-bold text-xs">{{ stats.player?.nick_name ? stats.player.nick_name.charAt(0).toUpperCase() : '' }}</span>
+              </div>
+              <span class="font-medium text-browers-black">{{ stats.player?.nick_name || '—' }}</span>
+            </div>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="match">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header="match" class="bg-browers-light-grey text-browers-black font-semibold">Match</th>
+          <td mat-cell *matCellDef="let stats">
+            <span class="text-sm text-browers-black">
+              {{ stats.match?.home_team?.short_name || stats.match?.home_team_id || '—' }}
+              vs
+              {{ stats.match?.away_team?.short_name || stats.match?.away_team_id || '—' }}
+            </span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="stats">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header="stats" class="bg-browers-light-grey text-browers-black font-semibold">Performance</th>
+          <td mat-cell *matCellDef="let stats">
+            <div class="flex space-x-2">
+              <span class="inline-flex px-2 py-1 text-xs font-medium rounded-full bg-green-100 text-green-800">
+                {{ stats.goals }}G
+              </span>
+              <span class="inline-flex px-2 py-1 text-xs font-medium rounded-full bg-blue-100 text-blue-800">
+                {{ stats.assists }}A
+              </span>
+              <span class="inline-flex px-2 py-1 text-xs font-medium rounded-full bg-yellow-100 text-yellow-800">
+                {{ stats.yellow_cards || 0 }}Y
+              </span>
+            </div>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef class="bg-browers-light-grey text-browers-black font-semibold">Actions</th>
+          <td mat-cell *matCellDef="let stats">
+            <div class="flex space-x-2">
+              <button mat-icon-button class="text-browers-deep-purple hover:bg-browers-light-grey" (click)="editStats(stats)" matTooltip="Edit stats">
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button mat-icon-button class="text-red-600 hover:bg-red-50" (click)="deleteStats(stats)" matTooltip="Delete stats">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </div>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="hover:bg-browers-light-grey transition-colors"></tr>
+      </table>
+
+        <div class="border-t border-browers-light-grey px-4 py-3">
+          <mat-paginator
+            #paginator
+            [length]="totalStats()"
+            [pageSize]="paginationParams().pageSize"
+            [pageIndex]="paginationParams().page"
+            [pageSizeOptions]="pageSizeOptions"
+            (page)="onPageChange($event)"
+            showFirstLastButtons>
+          </mat-paginator>
+        </div>
+    </div>
+
+    @if (dataSource.data.length === 0 && !loading()) {
+      <div class="text-center py-12">
+        <mat-icon class="text-browers-silver text-6xl mb-4">analytics</mat-icon>
+        <h3 class="text-xl font-medium text-browers-black mb-2">No statistics found</h3>
+        <p class="text-browers-steel-grey mb-6">Get started by adding player statistics.</p>
+        <button mat-flat-button color="primary" class="bg-browers-deep-purple hover:bg-browers-purple" (click)="addStats()">
+          <mat-icon>add</mat-icon>
+          Add First Stats
+        </button>
+      </div>
+    }
+  }

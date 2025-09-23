@@ -1,0 +1,364 @@
+<!-- Admin Matches - Following Users Template Pattern -->
+<div class="admin-matches">
+  <!-- Header Section with Title and Actions -->
+  <div class="header-section mb-6">
+    <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between">
+      <div>
+        <h1 class="text-2xl lg:text-3xl font-bold text-browers-black mb-2">Match Management</h1>
+        <p class="text-browers-steel-grey">Manage team matches, fixtures, and results</p>
+      </div>
+      
+      <div class="flex items-center gap-3 mt-4 lg:mt-0">
+        <button mat-icon-button
+                (click)="refreshData()" 
+                matTooltip="Refresh data"
+                class="text-browers-deep-purple hover:bg-browers-light-purple/10">
+          <mat-icon>refresh</mat-icon>
+        </button>
+        
+        <button mat-flat-button 
+                color="primary" 
+                (click)="addMatch()"
+                class="bg-browers-deep-purple text-browers-white hover:bg-browers-purple">
+          <mat-icon>add</mat-icon>
+          Add Match
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content Card -->
+  <mat-card class="main-content-card">
+    <!-- Error message -->
+    @if (error(); as err) {
+      <div class="error-message flex items-center gap-2 text-red-600 mb-6" role="alert" aria-live="polite">
+        <mat-icon aria-hidden="true">error</mat-icon>
+        <span class="font-medium">Error:</span>
+        <span>{{ err }}</span>
+      </div>
+    }
+
+    <!-- Loading State -->
+    @if (loading()) {
+      <div class="loading-container">
+        <!-- Header Skeleton -->
+        <div class="flex justify-between items-center mb-4">
+          <div class="skeleton-line w-32 h-6"></div>
+          <div class="skeleton-line w-24 h-6"></div>
+        </div>
+        
+        <!-- Table Header Skeleton -->
+        <div class="hidden lg:block mb-4">
+          <div class="grid grid-cols-7 gap-4 p-4 bg-browers-light-grey rounded-t-lg">
+            @for (col of displayedColumns; track col) {
+              <div class="skeleton-line h-4"></div>
+            }
+          </div>
+        </div>
+        
+        <!-- Table Rows Skeleton -->
+        <div class="space-y-2">
+          @for (item of [1,2,3,4,5]; track item) {
+            <!-- Desktop Row Skeleton -->
+            <div class="hidden lg:grid lg:grid-cols-7 lg:gap-4 lg:p-4 lg:border-b lg:border-browers-light-grey">
+              @for (col of displayedColumns; track col) {
+                <div class="skeleton-line h-4"></div>
+              }
+            </div>
+            
+            <!-- Mobile Card Skeleton -->
+            <div class="block lg:hidden p-4 border border-browers-light-grey rounded-lg">
+              <div class="skeleton-line w-3/4 h-5 mb-2"></div>
+              <div class="skeleton-line w-1/2 h-4 mb-3"></div>
+              <div class="space-y-2">
+                <div class="skeleton-line w-full h-4"></div>
+                <div class="skeleton-line w-2/3 h-4"></div>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    }
+
+    <!-- Desktop Table View -->
+    @if (!loading() && dataSource.data.length > 0) {
+      <div class="desktop-table hidden lg:block">
+        <div class="overflow-x-auto">
+     <table mat-table 
+  [dataSource]="dataSource" 
+  matSort
+  matSortDisableClear
+  [matSortActive]="paginationParams().sort ?? 'kickoff'"
+  [matSortDirection]="paginationParams().order ?? 'desc'"
+  #sort="matSort"
+  (matSortChange)="onSortChange($event)"
+  class="w-full">
+            
+            <!-- ID Column -->
+            <ng-container matColumnDef="id">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header="id" class="text-xs font-medium text-browers-steel-grey uppercase tracking-wider">ID</th>
+              <td mat-cell *matCellDef="let match" class="data-cell">
+                <span class="font-mono text-sm">#{{ match.id }}</span>
+              </td>
+            </ng-container>
+
+            <!-- Kickoff Column -->
+            <ng-container matColumnDef="kickoff">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header="kickoff" class="text-xs font-medium text-browers-steel-grey uppercase tracking-wider">Date & Time</th>
+              <td mat-cell *matCellDef="let match" class="data-cell">
+                <div class="text-sm">
+                  <div class="font-medium text-browers-black">{{ formatDate(match.kickoff) }}</div>
+                  <div class="text-browers-steel-grey">{{ formatTime(match.kickoff) }}</div>
+                </div>
+              </td>
+            </ng-container>
+
+            <!-- Home Team Column -->
+            <ng-container matColumnDef="home_team">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header="home_team" class="text-xs font-medium text-browers-steel-grey uppercase tracking-wider">Home Team</th>
+              <td mat-cell *matCellDef="let match" class="data-cell">
+                <div class="flex items-center">
+                  <div class="w-6 h-6 rounded-full bg-browers-deep-purple mr-2"></div>
+                  <span class="font-medium">{{ match?.home_team?.short_name || 'TBD' }}</span>
+                </div>
+              </td>
+            </ng-container>
+
+            <!-- Away Team Column -->
+            <ng-container matColumnDef="away_team">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header="away_team" class="text-xs font-medium text-browers-steel-grey uppercase tracking-wider">Away Team</th>
+              <td mat-cell *matCellDef="let match" class="data-cell">
+                <div class="flex items-center">
+                  <div class="w-6 h-6 rounded-full bg-browers-purple mr-2"></div>
+                  <span class="font-medium">{{ match?.away_team?.short_name || 'TBD' }}</span>
+                </div>
+              </td>
+            </ng-container>
+
+            <!-- Score Column -->
+            <ng-container matColumnDef="score">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header="score" class="text-xs font-medium text-browers-steel-grey uppercase tracking-wider">Score</th>
+              <td mat-cell *matCellDef="let match" class="data-cell text-center">
+                @if (match.status === 'finished' && match.home_goals !== undefined && match.away_goals !== undefined) {
+                  <span class="text-lg font-bold text-browers-black">
+                    {{ match.home_goals }} - {{ match.away_goals }}
+                  </span>
+                } @else {
+                  <span class="text-browers-steel-grey">-</span>
+                }
+              </td>
+            </ng-container>
+
+            <!-- Status Column -->
+            <ng-container matColumnDef="status">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header="status" class="text-xs font-medium text-browers-steel-grey uppercase tracking-wider">Status</th>
+              <td mat-cell *matCellDef="let match" class="data-cell">
+                <span class="status-badge status-{{ getStatusColor(match.status) }}">
+                  {{ getStatusDisplay(match.status) }}
+                </span>
+              </td>
+            </ng-container>
+
+            <!-- Location Column -->
+            <ng-container matColumnDef="location">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header="location" class="text-xs font-medium text-browers-steel-grey uppercase tracking-wider">Location</th>
+              <td mat-cell *matCellDef="let match" class="data-cell">
+                <div class="flex items-center">
+                  <mat-icon class="text-browers-steel-grey mr-1 text-sm">place</mat-icon>
+                  <span class="text-sm">{{ match.location || 'TBD' }}</span>
+                </div>
+              </td>
+            </ng-container>
+
+            <!-- Season Column -->
+            <ng-container matColumnDef="season">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header="season" class="text-xs font-medium text-browers-steel-grey uppercase tracking-wider">Season</th>
+              <td mat-cell *matCellDef="let match" class="data-cell">
+                <span class="text-sm">{{ match.season?.year ?? 'N/A' }}</span>
+              </td>
+            </ng-container>
+
+            <!-- Created At Column -->
+            <ng-container matColumnDef="created_at">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header="created_at" class="text-xs font-medium text-browers-steel-grey uppercase tracking-wider">Created</th>
+              <td mat-cell *matCellDef="let match" class="data-cell">
+                <span class="text-sm text-browers-steel-grey">{{ formatDate(match.created_at) }}</span>
+              </td>
+            </ng-container>
+
+            <!-- Updated At Column -->
+            <ng-container matColumnDef="updated_at">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header="updated_at" class="text-xs font-medium text-browers-steel-grey uppercase tracking-wider">Updated</th>
+              <td mat-cell *matCellDef="let match" class="data-cell">
+                <span class="text-sm text-browers-steel-grey">{{ formatDate(match.updated_at) }}</span>
+              </td>
+            </ng-container>
+
+            <!-- Actions Column -->
+            <ng-container matColumnDef="actions">
+              <th mat-header-cell *matHeaderCellDef class="text-xs font-medium text-browers-steel-grey uppercase tracking-wider">Actions</th>
+              <td mat-cell *matCellDef="let match" class="data-cell">
+                <div class="flex items-center gap-2">
+                  <button mat-icon-button 
+                          color="primary"
+                          (click)="editMatch(match)"
+                          matTooltip="Edit match"
+                          class="text-browers-deep-purple hover:bg-browers-light-purple/10">
+                    <mat-icon>edit</mat-icon>
+                  </button>
+
+                  <button mat-icon-button
+                          color="warn"
+                          (click)="deleteMatch(match)"
+                          matTooltip="Delete match"
+                          class="text-red-600 hover:bg-red-50">
+                    <mat-icon>delete</mat-icon>
+                  </button>
+                </div>
+              </td>
+            </ng-container>
+
+            <!-- Table Headers and Rows -->
+            <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;" 
+                class="hover:bg-browers-light-grey/30 transition-colors duration-150"></tr>
+          </table>
+        </div>
+        
+        <!-- Desktop Pagination -->
+        <div class="pagination-container mt-4 pt-4 border-t border-browers-light-grey">
+          <mat-paginator [length]="totalMatches()"
+                         [pageSize]="paginationParams().pageSize"
+                         [pageIndex]="paginationParams().page"
+                         [pageSizeOptions]="pageSizeOptions"
+                         (page)="onPageChange($event)"
+                         showFirstLastButtons
+                         aria-label="Select page">
+          </mat-paginator>
+        </div>
+      </div>
+    }
+
+    <!-- Mobile Card View -->
+    @if (!loading() && dataSource.data.length > 0) {
+      <div class="mobile-cards block lg:hidden">
+        <div class="grid gap-4">
+          @for (match of dataSource.data; track match.id) {
+            <div class="mobile-card p-4 border border-browers-light-grey rounded-lg hover:shadow-md transition-shadow">
+              <!-- Card Header -->
+              <div class="flex items-start justify-between mb-3">
+                <div>
+                  <div class="text-sm font-medium text-browers-black">{{ formatDate(match.kickoff) }}</div>
+                  <div class="text-sm text-browers-steel-grey">{{ formatTime(match.kickoff) }}</div>
+                </div>
+                <span class="status-badge status-{{ getStatusColor(match.status) }}">
+                  {{ getStatusDisplay(match.status) }}
+                </span>
+              </div>
+
+              <!-- Teams Section -->
+              <div class="teams-section mb-4">
+                <!-- Home Team -->
+                <div class="flex items-center justify-between mb-2">
+                  <div class="flex items-center">
+                    <div class="w-8 h-8 rounded-full bg-browers-deep-purple mr-3"></div>
+                    <span class="font-medium text-browers-black">{{ match?.home_team?.short_name || 'TBD' }}</span>
+                  </div>
+                  @if (match.status === 'finished' && match.home_goals !== undefined) {
+                    <span class="text-xl font-bold text-browers-black">{{ match.home_goals }}</span>
+                  }
+                </div>
+
+                <!-- VS or Score -->
+                <div class="text-center py-1">
+                  <span class="text-browers-steel-grey font-medium">{{ getMatchResult(match) }}</span>
+                </div>
+
+                <!-- Away Team -->
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center">
+                    <div class="w-8 h-8 rounded-full bg-browers-purple mr-3"></div>
+                    <span class="font-medium text-browers-black">{{ match?.away_team?.short_name || 'TBD' }}</span>
+                  </div>
+                  @if (match.status === 'finished' && match.away_goals !== undefined) {
+                    <span class="text-xl font-bold text-browers-black">{{ match.away_goals }}</span>
+                  }
+                </div>
+              </div>
+
+              <!-- Match Details -->
+              <div class="details-section space-y-2 pt-3 border-t border-browers-light-grey">
+                @if (match.location) {
+                  <div class="flex items-center text-sm text-browers-steel-grey">
+                    <mat-icon class="mr-2 text-base">place</mat-icon>
+                    <span>{{ match.location }}</span>
+                  </div>
+                }
+                
+                @if (match?.season?.year) {
+                  <div class="flex items-center text-sm text-browers-steel-grey">
+                    <mat-icon class="mr-2 text-base">event</mat-icon>
+                    <span>Season {{ match.season?.year }}</span>
+                  </div>
+                }
+              </div>
+
+              <!-- Card Actions -->
+              <div class="actions-section flex items-center justify-end gap-2 mt-4 pt-3 border-t border-browers-light-grey">
+                <button mat-stroked-button
+                        color="primary"
+                        matTooltip="Edit match"
+                        (click)="editMatch(match)"
+                        class="flex-1"
+                        aria-label="Edit match">
+                  <mat-icon>edit</mat-icon>
+                  Edit
+                </button>
+                
+                <button mat-stroked-button
+                        color="warn"
+                        matTooltip="Delete match"
+                        (click)="deleteMatch(match)"
+                        class="flex-1"
+                        aria-label="Delete match">
+                  <mat-icon>delete</mat-icon>
+                  Delete
+                </button>
+              </div>
+            </div>
+          }
+        </div>
+
+        <!-- Mobile Pagination -->
+        <div class="pagination-container mt-6">
+          <mat-paginator [length]="totalMatches()"
+                         [pageSize]="paginationParams().pageSize"
+                         [pageIndex]="paginationParams().page"
+                         [pageSizeOptions]="pageSizeOptions"
+                         (page)="onPageChange($event)"
+                         showFirstLastButtons
+                         aria-label="Select page">
+          </mat-paginator>
+        </div>
+      </div>
+    }
+
+    <!-- Empty State -->
+    @if (!loading() && dataSource.data.length === 0) {
+      <div class="empty-state text-center py-12">
+        <div class="mb-4">
+          <mat-icon class="text-6xl text-browers-silver">sports_soccer</mat-icon>
+        </div>
+        <h3 class="text-xl font-medium text-browers-black mb-2">No matches found</h3>
+        <p class="text-browers-steel-grey mb-6">Get started by scheduling your first match.</p>
+        <button mat-flat-button 
+                color="primary" 
+                (click)="addMatch()"
+                class="bg-browers-deep-purple text-browers-white hover:bg-browers-purple">
+          <mat-icon>add</mat-icon>
+          Schedule Match
+        </button>
+      </div>
+    }
+  </mat-card>
+</div>

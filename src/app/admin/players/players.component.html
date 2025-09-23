@@ -1,0 +1,343 @@
+<!-- Admin Players - Following Users Template Pattern -->
+<div class="admin-players">
+  <!-- Header Section with Title and Actions -->
+  <div class="header-section mb-6">
+    <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between">
+      <div>
+        <h1 class="text-2xl lg:text-3xl font-bold text-browers-black mb-2">Player Management</h1>
+        <p class="text-browers-steel-grey">Manage team players, positions, and performance data</p>
+      </div>
+
+      <div class="flex items-center gap-3 mt-4 lg:mt-0">
+        <button mat-icon-button (click)="refreshData()" matTooltip="Refresh data"
+          class="text-browers-deep-purple hover:bg-browers-light-purple/10">
+          <mat-icon>refresh</mat-icon>
+        </button>
+
+        <button mat-flat-button color="primary" (click)="addPlayer()"
+          class="bg-browers-deep-purple text-browers-white hover:bg-browers-purple">
+          <mat-icon>add</mat-icon>
+          Add Player
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content Card -->
+  <mat-card class="main-content-card">
+    <!-- Error message -->
+    @if (error(); as err) {
+    <div class="error-message flex items-center gap-2 text-red-600 mb-6" role="alert" aria-live="polite">
+      <mat-icon aria-hidden="true">error</mat-icon>
+      <span class="font-medium">Error:</span>
+      <span>{{ err }}</span>
+    </div>
+    }
+
+
+
+    <!-- Loading Skeleton -->
+    @if (loading()) {
+    <div class="space-y-4">
+      @for (item of [1,2,3,4,5]; track item) {
+      <div class="animate-pulse">
+        <div class="h-16 bg-browers-light-grey rounded-lg"></div>
+      </div>
+      }
+    </div>
+    }
+
+    <!-- Desktop Table View -->
+    @if (!loading() && !error()) {
+    <div class="hidden lg:block bg-white rounded-lg border border-browers-light-grey overflow-hidden">
+      <table mat-table [dataSource]="dataSource" matSort matSortDisableClear
+        [matSortActive]="paginationParams().sort ?? 'id'" [matSortDirection]="paginationParams().order ?? 'asc'"
+        #sort="matSort" (matSortChange)="onSortChange($event)" class="w-full">
+
+        <!-- Squad Number Column -->
+        <ng-container matColumnDef="squad_number">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header="squad_number"
+            class="text-xs font-medium text-browers-steel-grey uppercase tracking-wider">squad_number</th>
+          <td mat-cell *matCellDef="let player" class="text-center">
+            <span class="font-mono text-browers-purple">
+              {{ player.squad_number }}
+            </span>
+          </td>
+        </ng-container>
+
+        <!-- Name Column -->
+        <ng-container matColumnDef="nick_name">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header="nick_name"
+            class="text-xs font-medium text-browers-steel-grey uppercase tracking-wider">Name</th>
+          <td mat-cell *matCellDef="let player">
+            <div class="flex items-center space-x-3">
+              <div>
+                <span class="font-medium">{{ player.nick_name }}</span>
+                @if (player.user) {
+                <p>@{{ player.user.username }}</p>
+                }
+              </div>
+            </div>
+          </td>
+        </ng-container>
+
+        <!-- Position Column -->
+        <ng-container matColumnDef="position">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header="position"
+            class="text-xs font-medium text-browers-steel-grey uppercase tracking-wider">Position</th>
+          <td mat-cell *matCellDef="let player">
+            <span
+              [class]="'inline-flex px-2 py-1 text-xs font-medium rounded-full ' + getPositionColor(player.position)">
+              {{ player.position | uppercase }}
+            </span>
+          </td>
+        </ng-container>
+
+        <!-- Age Column -->
+        <ng-container matColumnDef="age">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header="age"
+            class="text-xs font-medium text-browers-steel-grey uppercase tracking-wider">Age</th>
+          <td mat-cell *matCellDef="let player" class="text-center">{{ player.age }}</td>
+        </ng-container>
+
+        <!-- Country Column -->
+        <ng-container matColumnDef="country">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header="country"
+            class="text-xs font-medium text-browers-steel-grey uppercase tracking-wider">Country</th>
+          <td mat-cell *matCellDef="let player">
+            <div class="flex items-center space-x-2">
+              <img [src]="getCountryFlag(player.country)" [alt]="player.country" class="w-5 h-3 rounded-sm">
+              <span class="text-sm font-medium">{{ player.country }}</span>
+              @if (player.country2) {
+              <span class="text-browers-steel-grey">|</span>
+              <img [src]="getCountryFlag(player.country2)" [alt]="player.country2" class="w-5 h-3 rounded-sm">
+              <span class="text-sm">{{ player.country2 }}</span>
+              }
+            </div>
+          </td>
+        </ng-container>
+
+        <!-- Height Column -->
+        <ng-container matColumnDef="height">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header="height"
+            class="text-xs font-medium text-browers-steel-grey uppercase tracking-wider">Height</th>
+          <td mat-cell *matCellDef="let player" class="text-center">{{ player.height }} cm</td>
+        </ng-container>
+
+        <!-- Foot Column -->
+        <ng-container matColumnDef="foot">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header="foot"
+            class="text-xs font-medium text-browers-steel-grey uppercase tracking-wider">Foot</th>
+          <td mat-cell *matCellDef="let player" class="text-center">
+            <span>{{ player.foot === 'L' ? 'Left' : 'Right' }}</span>
+          </td>
+        </ng-container>
+
+        <!-- Rating Column -->
+        <ng-container matColumnDef="rating">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header="rating"
+            class="text-xs font-medium text-browers-steel-grey uppercase tracking-wider">Rating</th>
+          <td mat-cell *matCellDef="let player" class="text-center">
+            <span>{{ player.rating }}</span>
+          </td>
+        </ng-container>
+
+        <!-- Matches Column -->
+        <ng-container matColumnDef="matches">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header="matches"
+            class="text-xs font-medium text-browers-steel-grey uppercase tracking-wider">Matches</th>
+          <td mat-cell *matCellDef="let player" class="text-center">
+            {{ player.matches }}
+          </td>
+        </ng-container>
+
+        <!-- Goals Column -->
+        <ng-container matColumnDef="goals">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header="goals"
+            class="text-xs font-medium text-browers-steel-grey uppercase tracking-wider">Goals</th>
+          <td mat-cell *matCellDef="let player" class="text-center">
+            <span
+              class="inline-flex items-center px-2 py-1 text-xs font-medium bg-green-100 text-green-800 rounded-full">
+              ⚽ {{ player.goals }}
+            </span>
+          </td>
+        </ng-container>
+
+        <!-- Assists Column -->
+        <ng-container matColumnDef="assists">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header="assists"
+            class="text-xs font-medium text-browers-steel-grey uppercase tracking-wider">Assists</th>
+          <td mat-cell *matCellDef="let player" class="text-center">
+            <span class="inline-flex items-center px-2 py-1 text-xs font-medium bg-blue-100 text-blue-800 rounded-full">
+              🎯 {{ player.assists }}
+            </span>
+          </td>
+        </ng-container>
+
+        <!-- Injury Status Column -->
+        <ng-container matColumnDef="injured">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header="injured"
+            class="text-xs font-medium text-browers-steel-grey uppercase tracking-wider">Status</th>
+          <td mat-cell *matCellDef="let player">
+            @if (player.injured) {
+            <span class="inline-flex px-2 py-1 text-xs font-medium rounded-full bg-red-100 text-red-800">Injured</span>
+            } @else {
+            <span
+              class="inline-flex px-2 py-1 text-xs font-medium rounded-full bg-green-100 text-green-800">Available</span>
+            }
+          </td>
+        </ng-container>
+
+        <!-- Actions Column -->
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef
+            class="text-xs font-medium text-browers-steel-grey uppercase tracking-wider">Actions</th>
+          <td mat-cell *matCellDef="let player">
+            <div class="flex space-x-2">
+              <button mat-icon-button color="primary" matTooltip="Edit player" (click)="editPlayer(player)">
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button mat-icon-button color="warn" (click)="deletePlayer(player)" matTooltip="Delete player">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </div>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"
+          class="hover:bg-browers-light-grey transition-colors"></tr>
+      </table>
+
+      <!-- Pagination -->
+      <div class="border-t border-browers-light-grey px-4 py-3">
+        <mat-paginator [length]="totalCount" [pageSize]="pageSize" [pageIndex]="currentPage"
+          [pageSizeOptions]="[5, 10, 20, 50]" (page)="onPageChange($event)" showFirstLastButtons>
+        </mat-paginator>
+      </div>
+    </div>
+
+    <!-- Mobile Card View -->
+    <div class="lg:hidden space-y-4">
+      @for (player of dataSource.data; track player.id) {
+      <mat-card class="border border-browers-light-grey">
+        <mat-card-content class="p-4">
+          <!-- Player Header -->
+          <div class="flex items-start justify-between mb-2">
+            <div class="flex items-center space-x-3">
+              <span class="text-browers-purple">
+                {{ player.squad_number }}
+              </span>
+              <div>
+                <span class="font-normal">{{ player.nick_name }}</span>
+                @if (player.user) {
+                <p class="text-sm text-browers-steel-grey">@{{ player.user.username }}</p>
+                }
+              </div>
+            </div>
+          </div>
+
+          <!-- Player Details -->
+          <div class="space-y-3">
+            <!-- Position and Status Row -->
+            <div class="flex items-center justify-between">
+              <span
+                [class]="'inline-flex px-2 py-1 text-xs font-medium rounded-full ' + getPositionColor(player.position)">
+                {{ player.position | uppercase }}
+              </span>
+              @if (player.injured) {
+              <span
+                class="inline-flex px-3 py-1 text-sm font-medium rounded-full bg-red-100 text-red-800">Injured</span>
+              } @else {
+              <span
+                class="inline-flex px-3 py-1 text-sm font-medium rounded-full bg-green-100 text-green-800">Available</span>
+              }
+            </div>
+
+            <!-- Basic Info Grid -->
+            <div class="grid grid-cols-2 gap-4 text-sm">
+              <div>
+                <span class="text-browers-steel-grey">Age:</span>
+                <span class="ml-1">{{ player.age }}</span>
+              </div>
+              <div>
+                <span class="text-browers-steel-grey">Height:</span>
+                <span class="ml-1">{{ player.height }} cm</span>
+              </div>
+              <div>
+                <span class="text-browers-steel-grey">Foot:</span>
+                <span class="ml-1">{{ player.foot === 'L' ? 'Left' : 'Right' }}</span>
+              </div>
+              <div>
+                <span class="text-browers-steel-grey">Rating:</span>
+                <span>{{ player.rating }}</span>
+              </div>
+            </div>
+
+            <!-- Countries -->
+            <div class="flex items-center space-x-2">
+              <span class="text-browers-steel-grey text-sm">Country:</span>
+              <img [src]="getCountryFlag(player.country)" [alt]="player.country" class="w-5 h-3 rounded-sm">
+              <span class="text-sm">{{ player.country }}</span>
+              @if (player.country2) {
+              <span class="text-browers-steel-grey">|</span>
+              <img [src]="getCountryFlag(player.country2)" [alt]="player.country2" class="w-5 h-3 rounded-sm">
+              <span class="text-sm">{{ player.country2 }}</span>
+              }
+            </div>
+
+            <!-- Stats Row -->
+            <div class="flex items-center justify-between">
+              <div class="flex space-x-4 text-sm">
+                <span class="text-browers-steel-grey">
+                  Matches: <span class="text-browers-black">{{ player.matches }}</span>
+                </span>
+                <span class="text-green-600">
+                  ⚽ {{ player.goals }}
+                </span>
+                <span class="text-blue-600">
+                  🎯 {{ player.assists }}
+                </span>
+              </div>
+            </div>
+          </div>
+          <div class="flex space-x-2 justify-end mt-1">
+            <button mat-stroked-button color="primary" class="flex-1" matTooltip="Edit player"
+              (click)="editPlayer(player)">
+              <mat-icon>edit</mat-icon>
+              Edit
+            </button>
+            <button mat-stroked-button color="warn" class="flex-1" matTooltip="Delete player"
+              (click)="deletePlayer(player)">
+              <mat-icon>delete</mat-icon>
+              Delete
+            </button>
+          </div>
+        </mat-card-content>
+      </mat-card>
+      }
+
+      <!-- Mobile Pagination -->
+      @if (totalCount > 0) {
+      <div class="mt-6">
+        <mat-paginator [length]="totalCount" [pageSize]="pageSize" [pageIndex]="currentPage"
+          [pageSizeOptions]="[5, 10, 20]" (page)="onPageChange($event)" showFirstLastButtons>
+        </mat-paginator>
+      </div>
+      }
+    </div>
+
+    <!-- Empty State -->
+    @if (dataSource.data.length === 0 && !loading()) {
+    <div class="text-center py-12">
+      <mat-icon class="text-browers-silver text-6xl mb-4">group</mat-icon>
+      <h3 class="text-xl font-normal text-browers-black mb-2">No players found</h3>
+      <p class="text-browers-steel-grey mb-6">Get started by adding your first player to the team.</p>
+      <button mat-flat-button color="primary" class="bg-browers-deep-purple hover:bg-browers-purple"
+        (click)="addPlayer()">
+        <mat-icon>add</mat-icon>
+        Add First Player
+      </button>
+    </div>
+    }
+    }

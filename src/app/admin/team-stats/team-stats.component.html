@@ -1,0 +1,361 @@
+<div class="p-4 lg:p-6">
+  <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-6">
+    <div>
+      <h1 class="text-2xl lg:text-3xl font-bold text-browers-black mb-2">Team Statistics</h1>
+      <p class="text-browers-steel-grey">Track team performance across seasons</p>
+    </div>
+    <button mat-flat-button color="primary" class="mt-4 lg:mt-0 bg-browers-deep-purple hover:bg-browers-purple" (click)="addTeamStats()">
+      <mat-icon>add</mat-icon>
+      Add Stats
+    </button>
+  </div>
+
+  <mat-card class="team-stats-card shadow-xs">
+  <!-- Skip link for keyboard navigation -->
+  <a class="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 bg-browers-deep-purple text-browers-white px-4 py-2 rounded z-50"
+     href="#team-stats-content">Skip to team stats content</a>
+
+  <mat-card-header class="border-b border-browers-light-grey pb-4">
+    <mat-card-title class="text-browers-deep-purple text-xl font-semibold">Team Statistics Management</mat-card-title>
+    <mat-card-subtitle class="text-browers-dark-grey mt-1">View and manage team performance statistics</mat-card-subtitle>
+  </mat-card-header>
+
+  <mat-card-content class="pt-6" id="team-stats-content">
+    <!-- Loading skeleton with screen reader announcements -->
+    @if (loading()) {
+      <!-- Screen reader announcement for loading state -->
+      <div class="sr-only" aria-live="polite">Loading team statistics data, please wait...</div>
+
+      <!-- Desktop Skeleton -->
+      @if (!isMobile()) {
+        <div class="skeleton-table" aria-hidden="true">
+          <div class="skeleton-header bg-browers-light-grey h-12 mb-1"></div>
+          @for (i of [1,2,3,4,5]; track i) {
+            <div class="skeleton-row flex space-x-4 h-14 p-4 border-b border-browers-light-grey">
+              <div class="skeleton-cell bg-browers-silver h-6 w-16 rounded animate-pulse"></div>
+              <div class="skeleton-cell bg-browers-silver h-6 w-24 rounded animate-pulse"></div>
+              <div class="skeleton-cell bg-browers-silver h-6 w-20 rounded animate-pulse"></div>
+              <div class="skeleton-cell bg-browers-silver h-6 w-16 rounded animate-pulse"></div>
+              <div class="skeleton-cell bg-browers-silver h-6 w-16 rounded animate-pulse"></div>
+              <div class="skeleton-cell bg-browers-silver h-6 w-16 rounded animate-pulse"></div>
+              <div class="skeleton-cell bg-browers-silver h-6 w-20 rounded animate-pulse"></div>
+            </div>
+          }
+        </div>
+      }
+
+      <!-- Mobile Skeleton -->
+      @if (isMobile()) {
+        <div class="skeleton-cards space-y-4" aria-hidden="true">
+          @for (i of [1,2,3]; track i) {
+            <mat-card class="skeleton-card bg-browers-white shadow-xs border border-browers-light-grey">
+              <mat-card-content class="p-4">
+                <div class="flex justify-between items-start mb-3">
+                  <div class="flex-1">
+                    <div class="skeleton-text bg-browers-silver h-5 w-32 rounded animate-pulse mb-2"></div>
+                    <div class="skeleton-text bg-browers-silver h-4 w-24 rounded animate-pulse"></div>
+                  </div>
+                  <div class="skeleton-badge bg-browers-silver h-6 w-16 rounded-full animate-pulse"></div>
+                </div>
+
+                <div class="space-y-2 mb-4">
+                  <div class="flex justify-between">
+                    <div class="skeleton-text bg-browers-silver h-4 w-8 rounded animate-pulse"></div>
+                    <div class="skeleton-text bg-browers-silver h-4 w-20 rounded animate-pulse"></div>
+                  </div>
+                  <div class="flex justify-between">
+                    <div class="skeleton-text bg-browers-silver h-4 w-16 rounded animate-pulse"></div>
+                    <div class="skeleton-text bg-browers-silver h-4 w-24 rounded animate-pulse"></div>
+                  </div>
+                </div>
+
+                <div class="flex space-x-2">
+                  <div class="skeleton-button bg-browers-silver h-9 flex-1 rounded animate-pulse"></div>
+                  <div class="skeleton-button bg-browers-silver h-9 flex-1 rounded animate-pulse"></div>
+                </div>
+              </mat-card-content>
+            </mat-card>
+          }
+        </div>
+      }
+    }
+
+    <!-- Error message -->
+    @if (error(); as err) {
+      <div class="error-message flex items-center gap-2 text-red-600 mb-6" role="alert" aria-live="polite">
+        <mat-icon aria-hidden="true">error</mat-icon>
+        <span class="font-medium">Error:</span>
+        <span>{{ err }}</span>
+      </div>
+    }
+
+    <!-- Team stats table/cards -->
+    @if (!loading() && !error() && dataSource.data.length > 0) {
+      <!-- Desktop Table View -->
+      @if (!isMobile()) {
+        <div class="table-container">
+          <table
+            mat-table
+            [dataSource]="dataSource"
+            matSort
+            matSortDisableClear
+            [matSortActive]="paginationParams().sort ?? 'rank'"
+            [matSortDirection]="paginationParams().order ?? 'asc'"
+            #sort="matSort"
+            (matSortChange)="onSortChange($event)"
+            class="team-stats-table"
+            aria-label="Team statistics management table with sorting and pagination">
+
+      <!-- ID Column -->
+      <ng-container matColumnDef="id">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header="id"
+          class="text-xs font-medium text-browers-steel-grey uppercase tracking-wider">ID</th>
+        <td mat-cell *matCellDef="let stats"
+          class="text-browers-charcoal font-mono">{{ stats.id }}</td>
+      </ng-container>
+
+      <!-- Team Column -->
+      <ng-container matColumnDef="team">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header="team"
+          class="text-xs font-medium text-browers-steel-grey uppercase tracking-wider">Team</th>
+        <td mat-cell *matCellDef="let stats"
+          class="text-browers-charcoal font-semibold">
+                @if (stats.team) {
+                  {{ stats.team.name }}
+                } @else {
+                  Team ID: {{ stats.team_id }}
+                }
+              </td>
+            </ng-container>
+
+      <!-- Season Column -->
+      <ng-container matColumnDef="season_id">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header="season_id"
+          class="text-xs font-medium text-browers-steel-grey uppercase tracking-wider">Season</th>
+        <td mat-cell *matCellDef="let stats"
+          class="text-browers-charcoal">
+                  Season ID: {{ stats.season_id }}
+              </td>
+            </ng-container>
+
+      <!-- Wins Column -->
+      <ng-container matColumnDef="wins">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header="wins"
+          class="text-xs font-medium text-browers-steel-grey uppercase tracking-wider">W</th>
+        <td mat-cell *matCellDef="let stats"
+          class="text-browers-charcoal text-center">{{ stats.wins }}</td>
+      </ng-container>
+
+      <!-- Draws Column -->
+      <ng-container matColumnDef="draws">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header="draws"
+          class="text-xs font-medium text-browers-steel-grey uppercase tracking-wider">D</th>
+        <td mat-cell *matCellDef="let stats"
+          class="text-browers-charcoal text-center">{{ stats.draws }}</td>
+      </ng-container>
+
+      <!-- Losses Column -->
+      <ng-container matColumnDef="losses">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header="losses"
+          class="text-xs font-medium text-browers-steel-grey uppercase tracking-wider">L</th>
+        <td mat-cell *matCellDef="let stats"
+          class="text-browers-charcoal text-center">{{ stats.losses }}</td>
+      </ng-container>
+
+      <!-- Goals For Column -->
+      <ng-container matColumnDef="goals_for">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header="goals_for"
+          class="text-xs font-medium text-browers-steel-grey uppercase tracking-wider">GF</th>
+        <td mat-cell *matCellDef="let stats"
+          class="text-browers-charcoal text-center">{{ stats.goals_for }}</td>
+      </ng-container>
+
+      <!-- Goals Against Column -->
+      <ng-container matColumnDef="goals_against">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header="goals_against"
+          class="text-xs font-medium text-browers-steel-grey uppercase tracking-wider">GA</th>
+        <td mat-cell *matCellDef="let stats"
+          class="text-browers-charcoal text-center">{{ stats.goals_against }}</td>
+      </ng-container>
+
+      <!-- Points Column -->
+      <ng-container matColumnDef="points">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header="points"
+          class="text-xs font-medium text-browers-steel-grey uppercase tracking-wider">Pts</th>
+        <td mat-cell *matCellDef="let stats"
+          class="text-browers-charcoal font-bold text-center">{{ stats.points }}</td>
+      </ng-container>
+
+      <!-- Rank Column -->
+      <ng-container matColumnDef="rank">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header="rank"
+          class="text-xs font-medium text-browers-steel-grey uppercase tracking-wider">Rank</th>
+        <td mat-cell *matCellDef="let stats"
+          class="text-browers-charcoal text-center">
+                <span [ngClass]="getRankBadgeClass(stats.rank)">
+                  {{ stats.rank }}
+                </span>
+              </td>
+            </ng-container>
+
+      <!-- Created At Column -->
+      <ng-container matColumnDef="created_at">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header="created_at"
+          class="text-xs font-medium text-browers-steel-grey uppercase tracking-wider">Created</th>
+        <td mat-cell *matCellDef="let stats"
+          class="text-browers-dark-grey text-sm">{{ formatDate(stats.created_at) }}</td>
+      </ng-container>
+
+      <!-- Updated At Column -->
+      <ng-container matColumnDef="updated_at">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header="updated_at"
+          class="text-xs font-medium text-browers-steel-grey uppercase tracking-wider">Updated</th>
+        <td mat-cell *matCellDef="let stats"
+          class="text-browers-dark-grey text-sm">{{ formatDate(stats.updated_at) }}</td>
+      </ng-container>
+
+            <!-- Actions Column -->
+            <ng-container matColumnDef="actions">
+              <th mat-header-cell *matHeaderCellDef
+                  class="text-xs font-medium text-browers-steel-grey uppercase tracking-wider">Actions</th>
+              <td mat-cell *matCellDef="let stats"
+                  class="space-x-1">
+                <button
+                  mat-icon-button
+                  color="primary"
+                  [matTooltip]="'Edit stats for ' + (stats.team?.name || 'Team ' + stats.team_id)"
+                  (click)="updateTeamStats(stats.id, stats)"
+                  class="hover:bg-browers-light-purple hover:bg-opacity-10 focus:outline-hidden focus:ring-3 focus:ring-browers-deep-purple focus:ring-offset-1"
+                  aria-label="Edit team statistics">
+                  <mat-icon>edit</mat-icon>
+                </button>
+                <button
+                  mat-icon-button
+                  color="warn"
+                  [matTooltip]="'Delete stats for ' + (stats.team?.name || 'Team ' + stats.team_id)"
+                  (click)="deleteTeamStats(stats.id)"
+                  class="hover:bg-red-50 focus:outline-hidden focus:ring-3 focus:ring-red-500 focus:ring-offset-1"
+                  aria-label="Delete team statistics">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns" class="bg-browers-light-grey sticky top-0 z-10"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="hover:bg-browers-light-grey hover:bg-opacity-50 transition-colors duration-150"></tr>
+          </table>
+        </div>
+      }
+
+      <!-- Mobile Card View -->
+      @if (isMobile()) {
+        <div class="mobile-cards-container space-y-4">
+          @for (stats of dataSource.data; track stats.id) {
+            <mat-card class="team-stats-card bg-browers-white shadow-xs border border-browers-light-grey hover:shadow-md transition-shadow duration-200">
+              <mat-card-content class="p-4">
+                <div class="flex justify-between items-start mb-3">
+                  <div class="flex-1">
+                    <h3 class="text-lg font-semibold text-browers-deep-purple">
+                      @if (stats.team) {
+                        {{ stats.team.full_name }}
+                      } @else {
+                        Team {{ stats.team_id }}
+                      }
+                    </h3>
+                    <p class="text-browers-dark-grey text-sm">
+                      @if (stats.season) {
+                        Season {{ stats.season.year }}
+                      } @else {
+                        Season {{ stats.season_id }}
+                      }
+                    </p>
+                  </div>
+                  <span [ngClass]="getRankBadgeClass(stats.rank)">
+                    #{{ stats.rank }}
+                  </span>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4 text-sm mb-4">
+                  <div class="text-center">
+                    <span class="text-browers-steel-grey">Record</span>
+                    <div class="font-semibold text-browers-black">{{ stats.wins }}-{{ stats.draws }}-{{ stats.losses }}</div>
+                  </div>
+                  <div class="text-center">
+                    <span class="text-browers-steel-grey">Points</span>
+                    <div class="font-bold text-browers-deep-purple text-lg">{{ stats.points }}</div>
+                  </div>
+                  <div class="text-center">
+                    <span class="text-browers-steel-grey">Goals For</span>
+                    <div class="font-medium text-green-600">{{ stats.goals_for }}</div>
+                  </div>
+                  <div class="text-center">
+                    <span class="text-browers-steel-grey">Goals Against</span>
+                    <div class="font-medium text-red-600">{{ stats.goals_against }}</div>
+                  </div>
+                </div>
+
+                <div class="mb-4">
+                  <div class="flex justify-between text-sm">
+                    <span class="text-browers-steel-grey">Goal Difference:</span>
+                    <span [class]="getGoalDifference(stats) >= 0 ? 'text-green-600 font-medium' : 'text-red-600 font-medium'">
+                      {{ getGoalDifference(stats) >= 0 ? '+' : '' }}{{ getGoalDifference(stats) }}
+                    </span>
+                  </div>
+                  <div class="flex justify-between text-sm">
+                    <span class="text-browers-steel-grey">Created:</span>
+                    <span class="text-browers-dark-grey">{{ formatDate(stats.created_at) }}</span>
+                  </div>
+                </div>
+
+                <div class="flex space-x-2 justify-end">
+                  <button
+                    mat-stroked-button
+                    color="primary"
+                    [matTooltip]="'Edit stats for ' + (stats?.team?.full_name || 'Team ' + stats.team_id)"
+                    (click)="updateTeamStats(stats.id, stats)"
+                    class="flex-1 hover:bg-browers-light-purple hover:bg-opacity-10 focus:outline-hidden focus:ring-3 focus:ring-browers-deep-purple focus:ring-offset-1"
+                    aria-label="Edit team statistics">
+                    <mat-icon class="mr-1">edit</mat-icon>
+                    Edit
+                  </button>
+                  <button
+                    mat-stroked-button
+                    color="warn"
+                    [matTooltip]="'Delete stats for ' + (stats?.team?.full_name || 'Team ' + stats?.team_id)"
+                    (click)="deleteTeamStats(stats.id)"
+                    class="flex-1 hover:bg-red-50 focus:outline-hidden focus:ring-3 focus:ring-red-500 focus:ring-offset-1"
+                    aria-label="Delete team statistics">
+                    <mat-icon class="mr-1">delete</mat-icon>
+                    Delete
+                  </button>
+                </div>
+              </mat-card-content>
+            </mat-card>
+          }
+        </div>
+      }
+
+      <!-- Paginator (responsive) -->
+      <mat-paginator
+        #paginator
+        [length]="totalTeamStats()"
+        [pageSize]="paginationParams().pageSize"
+        [pageIndex]="paginationParams().page"
+        [pageSizeOptions]="pageSizeOptions"
+        (page)="onPageChange($event)"
+        [showFirstLastButtons]="!isMobile()"
+        aria-label="Select page of team statistics"
+        class="border-t border-browers-light-grey bg-browers-white mt-4">
+      </mat-paginator>
+    }
+
+    <!-- No data message -->
+    @if (!loading() && !error() && dataSource.data.length === 0) {
+      <div class="no-data-message">
+        <mat-icon class="text-browers-silver text-6xl mb-4">assessment</mat-icon>
+        <p class="text-browers-steel-grey text-lg">No team statistics found.</p>
+        <p class="text-browers-steel-grey text-sm">Statistics will appear here when they are added to the system.</p>
+      </div>
+    }
+  </mat-card-content>
+</mat-card>

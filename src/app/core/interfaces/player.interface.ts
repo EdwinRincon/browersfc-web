@@ -18,9 +18,7 @@ export type PlayerFoot = 'L' | 'R';
 export interface PlayerShort {
   id: number;
   nick_name: string;
-  squad_number: number;
   position: PlayerPosition;
-  rating: number;
 }
 
 /**
@@ -46,7 +44,10 @@ export interface PlayerResponse {
   injured: boolean;
   career_summary: string;
   mvp_count: number;
-  user_id?: string;
+  user?: {
+    id: string;
+    username: string;
+  };
   created_at: string;
   updated_at: string;
 }
@@ -62,10 +63,8 @@ export interface CreatePlayerRequest {
   foot: PlayerFoot;
   age: number;
   squad_number: number;
-  rating: number;
   position: PlayerPosition;
-  injured?: boolean;
-  career_summary?: string;
+  career_summary: string;
   user_id?: string;
 }
 
@@ -81,15 +80,8 @@ export interface UpdatePlayerRequest {
   age?: number;
   squad_number?: number;
   rating?: number;
-  matches?: number;
-  y_cards?: number;
-  r_cards?: number;
-  goals?: number;
-  assists?: number;
-  saves?: number;
   position?: PlayerPosition;
   injured?: boolean;
   career_summary?: string;
-  mvp_count?: number;
   user_id?: string;
 }

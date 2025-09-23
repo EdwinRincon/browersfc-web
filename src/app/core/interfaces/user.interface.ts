@@ -14,12 +14,13 @@ export interface UserRole {
  * Complete user response from backend
  */
 export interface UserResponse {
-  id: number;
+  id: string;
   username: string;
   name: string;
   last_name: string;
   role: UserRole;
   img_profile?: string;
+  img_banner?: string;
   birthdate?: string;
   created_at: string;
   updated_at: string;
@@ -29,10 +30,8 @@ export interface UserResponse {
  * Simplified user interface for basic display
  */
 export interface UserShort {
-  id: number;
+  id: string;
   username: string;
-  name: string;
-  last_name: string;
 }
 
 /**
@@ -50,8 +49,6 @@ export interface CreateUserRequest {
   name: string;
   last_name: string;
   role_id: number;
-  img_profile?: string;
-  birthdate?: string;
 }
 
 /**
@@ -63,5 +60,6 @@ export interface UpdateUserRequest {
   last_name?: string;
   role_id?: number;
   img_profile?: string;
+  img_banner?: string;
   birthdate?: string;
 }

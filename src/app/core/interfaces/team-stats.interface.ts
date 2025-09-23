@@ -9,7 +9,6 @@ import { SeasonShort } from './season.interface';
  */
 export interface TeamStatsShort {
   id: number;
-  team: TeamShort;
   wins: number;
   draws: number;
   losses: number;
@@ -33,10 +32,8 @@ export interface TeamStatsResponse {
   team_id: number;
   created_at: string;
   updated_at: string;
-  
-  // Related entities
-  team: TeamShort;
-  season: SeasonShort;
+  team?: TeamShort;
+  season?: SeasonShort;
 }
 
 /**

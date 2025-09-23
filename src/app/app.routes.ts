@@ -12,6 +12,15 @@ export const routes: Routes = [
     canActivate: [AdminGuard],
     children: [
       { path: 'users', loadComponent: () => import('./admin/users/users.component').then(m => m.UsersComponent) },
+      { path: 'seasons', loadComponent: () => import('./admin/seasons/seasons.component').then(m => m.SeasonsComponent) },
+      { path: 'teams', loadComponent: () => import('./admin/teams/teams.component').then(m => m.TeamsComponent) },
+      { path: 'players', loadComponent: () => import('./admin/players/players.component').then(m => m.PlayersComponent) },
+      { path: 'matches', loadComponent: () => import('./admin/matches/matches.component').then(m => m.MatchesComponent) },
+      { path: 'lineups', loadComponent: () => import('./admin/lineups/lineups.component').then(m => m.LineupsComponent) },
+      { path: 'player-stats', loadComponent: () => import('./admin/player-stats/player-stats.component').then(m => m.PlayerStatsComponent) },
+      { path: 'team-stats', loadComponent: () => import('./admin/team-stats/team-stats.component').then(m => m.TeamStatsComponent) },
+      { path: 'player-teams', loadComponent: () => import('./admin/player-teams/player-teams.component').then(m => m.PlayerTeamsComponent) },
+      { path: 'articles', loadComponent: () => import('./admin/articles/articles.component').then(m => m.ArticlesComponent) },
       { path: '', redirectTo: 'users', pathMatch: 'full' }
     ]
   },

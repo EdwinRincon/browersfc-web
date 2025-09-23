@@ -39,11 +39,9 @@ export interface PlayerStatsResponse {
   position: PlayerPosition;
   created_at: string;
   updated_at: string;
-  
-  // Related entities
-  player: PlayerShort;
-  match: MatchShort;
-  season: SeasonShort;
+  player?: PlayerShort;
+  match?: MatchShort;
+  season?: SeasonShort;
   team?: TeamShort;
 }
 

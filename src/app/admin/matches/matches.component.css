@@ -1,0 +1,202 @@
+/* Admin Matches Component - Following Users Template Pattern */
+
+/* Main container */
+.admin-matches {
+  padding: 1rem;
+}
+
+@media (min-width: 1024px) {
+  .admin-matches {
+    padding: 1.5rem;
+  }
+}
+
+/* Header section */
+.header-section {
+  margin-bottom: 1.5rem;
+}
+
+/* Main content card */
+.main-content-card {
+  background-color: white;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  border: 1px solid var(--color-browers-light-grey);
+  overflow: hidden;
+}
+
+/* Loading states */
+.loading-container {
+  padding: 1.5rem;
+}
+
+.skeleton-line {
+  background-color: var(--color-browers-light-grey);
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  border-radius: 0.25rem;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* Error alert */
+.error-alert {
+  background-color: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 0.5rem;
+}
+
+/* Desktop table styles */
+.desktop-table {
+  overflow-x: auto;
+}
+
+
+
+.data-cell {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid rgba(239, 239, 239, 0.5);
+}
+
+/* Status badges */
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.125rem 0.625rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.status-scheduled {
+  background-color: #dbeafe;
+  color: #1e40af;
+}
+
+.status-in-progress {
+  background-color: #fef3c7;
+  color: #d97706;
+}
+
+.status-finished {
+  background-color: #d1fae5;
+  color: #065f46;
+}
+
+.status-postponed {
+  background-color: #fed7aa;
+  color: #ea580c;
+}
+
+.status-cancelled {
+  background-color: #fecaca;
+  color: #dc2626;
+}
+
+.status-default {
+  background-color: #f3f4f6;
+  color: #374151;
+}
+
+/* Mobile cards */
+.mobile-cards {
+  padding: 1rem;
+}
+
+.mobile-card {
+  background-color: white;
+  border: 1px solid var(--color-browers-light-grey);
+  border-radius: 0.5rem;
+}
+
+/* Teams section */
+.teams-section > * + * {
+  margin-top: 0.5rem;
+}
+
+/* Details section */
+.details-section {
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--color-browers-light-grey);
+}
+
+.details-section > * + * {
+  margin-top: 0.5rem;
+}
+
+/* Actions section */
+.actions-section {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--color-browers-light-grey);
+}
+
+/* Pagination */
+.pagination-container {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--color-browers-light-grey);
+}
+
+/* Empty state */
+.empty-state {
+  text-align: center;
+  padding: 3rem 0;
+}
+
+/* Team colors */
+.team-home {
+  background-color: var(--color-browers-deep-purple);
+}
+
+.team-away {
+  background-color: var(--color-browers-purple);
+}
+
+/* Responsive utilities */
+@media (max-width: 1023px) {
+  .desktop-table {
+    display: none;
+  }
+  
+  .mobile-cards {
+    display: block;
+  }
+}
+
+@media (min-width: 1024px) {
+  .desktop-table {
+    display: block;
+  }
+  
+  .mobile-cards {
+    display: none;
+  }
+}
+
+.error-message {
+  width: fit-content;
+  color: #dc2626; /* Red for error messages */
+  padding: 12px;
+  background-color: rgba(220, 38, 38, 0.1);
+  border-radius: 6px;
+  border-left: 4px solid #dc2626;
+  margin: 12px 0;
+  font-size: 14px;
+  
+  @media (min-width: 768px) {
+    padding: 16px;
+    margin: 16px 0;
+    font-size: 16px;
+  }
+}

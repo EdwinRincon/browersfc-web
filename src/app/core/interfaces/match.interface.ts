@@ -17,10 +17,9 @@ export interface MatchShort {
   id: number;
   status: MatchStatus;
   kickoff: string;
+  location: string;
   home_goals: number;
   away_goals: number;
-  home_team: TeamShort;
-  away_team: TeamShort;
 }
 
 /**
@@ -39,11 +38,9 @@ export interface MatchResponse {
   mvp_player_id?: number;
   created_at: string;
   updated_at: string;
-  
-  // Related entities
-  home_team: TeamShort;
-  away_team: TeamShort;
-  season: SeasonShort;
+  home_team?: TeamShort;
+  away_team?: TeamShort;
+  season?: SeasonShort;
   mvp_player?: PlayerShort;
 }
 
