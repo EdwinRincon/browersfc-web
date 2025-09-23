@@ -4,6 +4,7 @@ import { FooterComponent } from './footer/footer.component';
 import { RouterOutlet, Router, NavigationEnd } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthService } from './services/auth/auth.service';
+import { UpdateService } from './services/update.service';
 
 @Component({
   selector: 'app-root',
@@ -15,6 +16,8 @@ import { AuthService } from './services/auth/auth.service';
 export class AppComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly authService = inject(AuthService);
+  // Force the UpdateService to be instantiated at app start so it can listen for SW updates
+  private readonly updateService = inject(UpdateService, { optional: true });
   
   // Signal to track current route
   protected readonly currentUrl = signal<string>('');
@@ -32,6 +35,7 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.authService.init();
+     this.authService.init();
+     this.updateService?.initialize();
   }
 }
