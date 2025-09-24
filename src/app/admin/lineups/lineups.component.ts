@@ -1,4 +1,3 @@
-
 import { Component, OnInit, AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, ViewChild, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatTableDataSource } from '@angular/material/table';
@@ -7,6 +6,8 @@ import { MatSort, Sort } from '@angular/material/sort';
 import { MaterialModule } from '../../material/material.module';
 import { LineupService } from '../../services/lineup/lineup.service';
 import { LineupResponse, PaginationParams, ApiSuccessResponse, PaginatedResponse } from '../../core/interfaces';
+import { AdminLineupPitchComponent } from './admin-lineup-pitch.component';
+
 
 
 @Component({
@@ -16,7 +17,8 @@ import { LineupResponse, PaginationParams, ApiSuccessResponse, PaginatedResponse
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
-    MaterialModule
+    MaterialModule,
+    AdminLineupPitchComponent
   ]
 })
 export class LineupsComponent implements OnInit, AfterViewInit {

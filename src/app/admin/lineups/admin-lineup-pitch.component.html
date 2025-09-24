@@ -1,0 +1,64 @@
+<section class="w-full flex flex-col items-center p-4">
+  <!-- Formation Indicator -->
+  <div class="w-full max-w-md mb-6">
+    <div class="bg-browers-deep-purple text-browers-white text-sm font-medium px-6 py-3 rounded-lg shadow-md flex items-center justify-between">
+      
+      <!-- Formation Selector -->
+      <select
+        class="px-3 py-2 rounded text-sm font-medium border border-browers-silver bg-browers-white text-browers-black 
+               focus:outline-none focus:border-browers-lavender focus:ring-2 focus:ring-browers-lavender 
+               transition-colors cursor-pointer"
+        [value]="formation()" 
+        (change)="setFormation($any($event.target).value)"
+        aria-label="Select formation"
+      >
+        @for (form of availableFormations(); track form) {
+          <option [value]="form">{{ form }}</option>
+        }
+      </select>
+
+      <!-- Players count -->
+      <span class="text-browers-lavender font-semibold whitespace-nowrap ml-4">
+        {{ selectedPlayersCount() }}/7 Players
+      </span>
+    </div>
+  </div>
+
+  <!-- Soccer Pitch Container -->
+  <div class="relative w-full max-w-md aspect-[3/4] bg-gradient-to-br from-green-600 to-green-700 rounded-2xl border-4 border-green-800 shadow-2xl overflow-hidden">
+    
+    <!-- Pitch Markings -->
+    <div class="absolute inset-4 border-2 border-green-300/50 border-dashed rounded-lg"></div>
+    <div class="absolute top-1/2 left-0 right-0 border-t-2 border-green-300/50 border-dashed"></div>
+    <div class="absolute top-1/2 left-1/2 w-3 h-3 border-2 border-green-300/50 rounded-full -translate-x-1/2 -translate-y-1/2"></div>
+
+    <!-- Goal Areas -->
+    <div class="absolute bottom-2 left-1/2 -translate-x-1/2 w-32 h-6 border-2 border-green-300/50 border-t-0 rounded-t-none"></div>
+    <div class="absolute top-2 left-1/2 -translate-x-1/2 w-32 h-6 border-2 border-green-300/50 border-b-0 rounded-b-none"></div>
+
+    <!-- Player Slots -->
+    @for (slot of playerSlots(); track slot.id; let i = $index) {
+      <button
+        class="absolute w-12 h-12 rounded-full bg-green-200/90 backdrop-blur-sm border-2 border-green-700 shadow-lg
+               flex items-center justify-center transition-all duration-200 hover:scale-110 hover:bg-green-300
+               focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-green-700
+               transform -translate-x-1/2 -translate-y-1/2"
+        [style.left.%]="slot.position.x"
+        [style.top.%]="slot.position.y"
+        [class.bg-green-400]="slot.playerName"
+        [class.border-white]="slot.playerName"
+        (click)="onSlotClick(slot.id)"
+        type="button"
+        [attr.aria-label]="getSlotAriaLabel(slot, i)"
+      >
+        @if (slot.playerName) {
+          <span class="text-green-900 font-bold text-xs truncate px-1">
+            {{ getPlayerInitials(slot.playerName) }}
+          </span>
+        } @else {
+          <span class="text-green-700 text-lg font-bold">+</span>
+        }
+      </button>
+    }
+  </div>
+</section>

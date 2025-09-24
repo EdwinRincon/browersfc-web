@@ -26,14 +26,14 @@
 
   @if (!loading() && !error()) {
     <div class="hidden lg:block bg-white rounded-lg border border-browers-light-grey overflow-hidden">
-  <table mat-table [dataSource]="dataSource"
-  matSort
-  matSortDisableClear
-  [matSortActive]="paginationParams().sort ?? 'created_at'"
-  [matSortDirection]="paginationParams().order ?? 'desc'"
-  #sort="matSort"
-  (matSortChange)="onSortChange($event)"
-  class="w-full">
+      <table mat-table [dataSource]="dataSource"
+        matSort
+        matSortDisableClear
+        [matSortActive]="paginationParams().sort ?? 'created_at'"
+        [matSortDirection]="paginationParams().order ?? 'desc'"
+        #sort="matSort"
+        (matSortChange)="onSortChange($event)"
+        class="w-full">
 
         <ng-container matColumnDef="id">
           <th mat-header-cell *matHeaderCellDef mat-sort-header="id" class="text-xs font-medium text-browers-steel-grey uppercase tracking-wider">ID</th>
@@ -112,6 +112,7 @@
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
         <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="hover:bg-browers-light-grey transition-colors"></tr>
       </table>
+
 
       <div class="border-t border-browers-light-grey px-4 py-3">
         <mat-paginator
@@ -196,6 +197,9 @@
         </div>
       }
     </div>
+    
+      <!-- 7-a-side Pitch Builder (always visible) -->
+      <admin-lineup-pitch />
 
   @if ((dataSource.data || []).length === 0 && !loading()) {
       <div class="text-center py-12">
