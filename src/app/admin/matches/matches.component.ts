@@ -1,5 +1,5 @@
 import { Component, OnInit, AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, inject, signal, computed, ViewChild } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { MatTableDataSource } from '@angular/material/table';
 import { PageEvent, MatPaginator } from '@angular/material/paginator';
 import { Sort, MatSort } from '@angular/material/sort';
@@ -10,9 +10,8 @@ import { MatchService } from '../../services/match/match.service';
 @Component({
   selector: 'app-matches',
   imports: [
-    CommonModule,
-    MaterialModule,
-  ],
+    MaterialModule
+],
   templateUrl: './matches.component.html',
   styleUrls: ['./matches.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush

@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, OnInit, signal, inject, ViewChild, AfterViewInit, ChangeDetectorRef, OnDestroy, computed } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatSort, Sort } from '@angular/material/sort';
@@ -14,9 +14,8 @@ import { MaterialModule } from '../../material/material.module';
   styleUrls: ['./player-stats.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
     MaterialModule
-  ]
+]
 })
 
 export class PlayerStatsComponent implements OnInit, AfterViewInit, OnDestroy {

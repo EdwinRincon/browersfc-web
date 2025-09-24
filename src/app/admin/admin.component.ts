@@ -1,5 +1,5 @@
 import { Component, ChangeDetectionStrategy, signal, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { AuthService } from '../services/auth/auth.service';
 import { MaterialModule } from '../material/material.module';
 
@@ -9,9 +9,8 @@ import { MaterialModule } from '../material/material.module';
   templateUrl: './admin.component.html',
   styleUrls: ['./admin.component.css'],
   imports: [
-    CommonModule,
     MaterialModule
-  ],
+],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
     '(window:resize)': 'onResize()'

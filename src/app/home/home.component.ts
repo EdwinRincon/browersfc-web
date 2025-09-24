@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, OnInit, inject, signal } from '@angular/core';
-import { CommonModule, NgOptimizedImage  } from '@angular/common';
+import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { ArticleService } from '../services/article/article.service';
 import { ArticleResponse } from '../core/interfaces';
 

@@ -1,5 +1,5 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { MaterialModule } from '../material/material.module';
 
 interface Player {
@@ -28,7 +28,7 @@ interface Player {
   selector: 'app-player',
   templateUrl: './player.component.html',
   styleUrls: ['./player.component.css'],
-  imports: [CommonModule, MaterialModule],
+  imports: [MaterialModule],
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

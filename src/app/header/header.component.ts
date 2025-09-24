@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, signal, computed, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { RouterModule } from '@angular/router';
 
 @Component({
@@ -7,7 +7,7 @@ import { RouterModule } from '@angular/router';
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, RouterModule],
+  imports: [RouterModule],
   host: {
     '(window:resize)': 'onResize($event)'
   }

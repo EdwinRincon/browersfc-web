@@ -18,12 +18,12 @@
       </p>
     </div>
     <!-- Player Image -->
-    <img 
-      src="../../assets/img/camiseta-browers-purple.jpg" 
+    <img
+      src="../../assets/img/camiseta-browers-purple.jpg"
       alt="Foto de {{ player.nick_name }}"
-      class="w-40 sm:w-56 h-auto rounded-2xl shadow-xl backdrop-blur-md border border-browers-deep-purple object-cover mt-2" 
+      class="w-40 sm:w-56 h-auto rounded-2xl shadow-xl backdrop-blur-md border border-browers-deep-purple object-cover mt-2"
       loading="lazy"
-    />
+      />
   </div>
 </div>
 <!-- Career Summary -->
@@ -36,46 +36,48 @@
 
 <!-- Player Info Cards -->
 <div class="max-w-6xl mx-auto px-4 sm:px-6 mt-10 grid grid-cols-2 sm:grid-cols-6 gap-6">
-  
+
   <!-- Nacionalidad -->
   <div class="backdrop-blur-md bg-browers-deep-purple p-4 rounded-xl shadow-md">
     <p class="text-browers-white text-xs uppercase tracking-wide">Nacionalidad</p>
     <p class="text-browers-white text-xl font-light">
-      {{ player.country }}<span *ngIf="player.country2"> / {{ player.country2 }}</span>
-    </p>
-  </div>
+      {{ player.country }}@if (player.country2) {
+      <span> / {{ player.country2 }}</span>
+    }
+  </p>
+</div>
 
-  <!-- Altura -->
-  <div class="backdrop-blur-md bg-browers-deep-purple p-4 rounded-xl shadow-md">
-    <p class="text-browers-white text-xs uppercase tracking-wide">Altura (cm)</p>
-    <p class="text-browers-white text-xl font-light">{{ player.height }}</p>
-  </div>
+<!-- Altura -->
+<div class="backdrop-blur-md bg-browers-deep-purple p-4 rounded-xl shadow-md">
+  <p class="text-browers-white text-xs uppercase tracking-wide">Altura (cm)</p>
+  <p class="text-browers-white text-xl font-light">{{ player.height }}</p>
+</div>
 
-  <!-- Edad -->
-  <div class="backdrop-blur-md bg-browers-deep-purple p-4 rounded-xl shadow-md">
-    <p class="text-browers-white text-xs uppercase tracking-wide">Edad</p>
-    <p class="text-browers-white text-xl font-light">{{ player.age }}</p>
-  </div>
+<!-- Edad -->
+<div class="backdrop-blur-md bg-browers-deep-purple p-4 rounded-xl shadow-md">
+  <p class="text-browers-white text-xs uppercase tracking-wide">Edad</p>
+  <p class="text-browers-white text-xl font-light">{{ player.age }}</p>
+</div>
 
-  <!-- Pie hábil -->
-  <div class="backdrop-blur-md bg-browers-deep-purple p-4 rounded-xl shadow-md">
-    <p class="text-browers-white text-xs uppercase tracking-wide">Pie hábil</p>
-    <p class="text-browers-white text-xl font-light">
-      {{ player.foot === 'D' ? 'Derecho' : player.foot === 'I' ? 'Izquierdo' : 'Ambidiestro' }}
-    </p>
-  </div>
+<!-- Pie hábil -->
+<div class="backdrop-blur-md bg-browers-deep-purple p-4 rounded-xl shadow-md">
+  <p class="text-browers-white text-xs uppercase tracking-wide">Pie hábil</p>
+  <p class="text-browers-white text-xl font-light">
+    {{ player.foot === 'D' ? 'Derecho' : player.foot === 'I' ? 'Izquierdo' : 'Ambidiestro' }}
+  </p>
+</div>
 
-  <!-- Posición -->
-  <div class="backdrop-blur-md bg-browers-deep-purple p-4 rounded-xl shadow-md">
-    <p class="text-browers-white text-xs uppercase tracking-wide">Posición</p>
-    <p class="text-browers-white text-xl font-light">{{ player.position }}</p>
-  </div>
+<!-- Posición -->
+<div class="backdrop-blur-md bg-browers-deep-purple p-4 rounded-xl shadow-md">
+  <p class="text-browers-white text-xs uppercase tracking-wide">Posición</p>
+  <p class="text-browers-white text-xl font-light">{{ player.position }}</p>
+</div>
 
-    <!-- Partidos -->
-  <div class="bg-browers-deep-purple p-4 rounded-xl shadow-md">
-    <p class="text-white text-xs uppercase tracking-wide">Partidos</p>
-    <p class="text-white text-xl font-light">{{ player.matches }}</p>
-  </div>
+<!-- Partidos -->
+<div class="bg-browers-deep-purple p-4 rounded-xl shadow-md">
+  <p class="text-white text-xs uppercase tracking-wide">Partidos</p>
+  <p class="text-white text-xl font-light">{{ player.matches }}</p>
+</div>
 
 </div>
 
