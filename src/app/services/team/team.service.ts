@@ -1,5 +1,6 @@
-import { Injectable, inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+
+import { Injectable, inject, Signal } from '@angular/core';
+import { HttpClient, httpResource } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
@@ -8,7 +9,6 @@ import {
   TeamResponse,
   CreateTeamRequest,
   UpdateTeamRequest,
-  ApiSuccessResponse,
   PaginatedResponse,
   PaginationParams
 } from '../../core/interfaces';
@@ -31,8 +31,7 @@ export class TeamService {
       sort: params.sort || 'full_name',
       order: params.order || 'asc'
     };
-
-    return this.http.get<ApiSuccessResponse<PaginatedResponse<TeamResponse>>>(
+    return this.http.get<{ data: PaginatedResponse<TeamResponse> }>(
       this.baseUrl,
       { params: queryParams }
     ).pipe(
@@ -44,7 +43,7 @@ export class TeamService {
    * Get a specific team by ID
    */
   getTeamById(id: number): Observable<TeamResponse> {
-    return this.http.get<ApiSuccessResponse<TeamResponse>>(
+    return this.http.get<{ data: TeamResponse }>(
       `${this.baseUrl}/${id}`
     ).pipe(
       map(response => response.data)
@@ -55,7 +54,7 @@ export class TeamService {
    * Create a new team (admin only)
    */
   createTeam(teamData: CreateTeamRequest): Observable<TeamResponse> {
-    return this.http.post<ApiSuccessResponse<TeamResponse>>(
+    return this.http.post<{ data: TeamResponse }>(
       this.adminBaseUrl,
       teamData
     ).pipe(
@@ -67,7 +66,7 @@ export class TeamService {
    * Update an existing team (admin only)
    */
   updateTeam(id: number, teamData: UpdateTeamRequest): Observable<TeamResponse> {
-    return this.http.put<ApiSuccessResponse<TeamResponse>>(
+    return this.http.put<{ data: TeamResponse }>(
       `${this.adminBaseUrl}/${id}`,
       teamData
     ).pipe(
@@ -87,5 +86,21 @@ export class TeamService {
     return this.getTeams({ page: 0, pageSize: 100, sort: 'full_name', order: 'asc' }).pipe(
       map(response => response.items)
     );
+  }
+
+  /**
+   * Signal-powered paginated teams resource
+   */
+  getTeamsResource(paginationParams: Signal<PaginationParams>) {
+    return httpResource<{ data: PaginatedResponse<TeamResponse> }>(() => ({
+      url: this.baseUrl,
+      method: 'GET',
+      params: {
+        page: paginationParams().page.toString(),
+        pageSize: paginationParams().pageSize.toString(),
+        sort: paginationParams().sort ?? 'full_name',
+        order: paginationParams().order ?? 'asc'
+      }
+    }));
   }
 }

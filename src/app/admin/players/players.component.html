@@ -9,11 +9,6 @@
       </div>
 
       <div class="flex items-center gap-3 mt-4 lg:mt-0">
-        <button mat-icon-button (click)="refreshData()" matTooltip="Refresh data"
-          class="text-browers-deep-purple hover:bg-browers-light-purple/10">
-          <mat-icon>refresh</mat-icon>
-        </button>
-
         <button mat-flat-button color="primary" (click)="addPlayer()"
           class="bg-browers-deep-purple text-browers-white hover:bg-browers-purple">
           <mat-icon>add</mat-icon>
@@ -25,34 +20,34 @@
 
   <!-- Main Content Card -->
   <mat-card class="main-content-card">
-    <!-- Error message -->
-    @if (error(); as err) {
-    <div class="error-message flex items-center gap-2 text-red-600 mb-6" role="alert" aria-live="polite">
-      <mat-icon aria-hidden="true">error</mat-icon>
-      <span class="font-medium">Error:</span>
-      <span>{{ err }}</span>
-    </div>
+    <!-- Loading skeleton with screen reader announcements -->
+    @if (paginatedPlayers.isLoading()) {
+      <div class="sr-only" aria-live="polite">Loading players data, please wait...</div>
+      <div class="space-y-4">
+        @for (item of [1,2,3,4,5]; track item) {
+          <div class="animate-pulse">
+            <div class="h-16 bg-browers-light-grey rounded-lg"></div>
+          </div>
+        }
+      </div>
     }
 
-
-
-    <!-- Loading Skeleton -->
-    @if (loading()) {
-    <div class="space-y-4">
-      @for (item of [1,2,3,4,5]; track item) {
-      <div class="animate-pulse">
-        <div class="h-16 bg-browers-light-grey rounded-lg"></div>
+    <!-- Error message -->
+    @if (paginatedPlayers.error(); as err) {
+      <div class="error-message flex items-center gap-2 text-red-600 mb-6" role="alert" aria-live="polite">
+        <mat-icon aria-hidden="true">error</mat-icon>
+        <span class="font-medium">Error:</span>
+        <span>{{ err.message }}</span>
       </div>
-      }
-    </div>
     }
 
     <!-- Desktop Table View -->
-    @if (!loading() && !error()) {
-    <div class="hidden lg:block bg-white rounded-lg border border-browers-light-grey overflow-hidden">
-      <table mat-table [dataSource]="dataSource" matSort matSortDisableClear
-        [matSortActive]="paginationParams().sort ?? 'id'" [matSortDirection]="paginationParams().order ?? 'asc'"
-        #sort="matSort" (matSortChange)="onSortChange($event)" class="w-full">
+    @if (!paginatedPlayers.isLoading() && !paginatedPlayers.error() && (paginatedPlayersItems.length > 0)) {
+      @let items = paginatedPlayersItems;
+      <div class="hidden lg:block bg-white rounded-lg border border-browers-light-grey overflow-hidden">
+        <table mat-table [dataSource]="items" matSort matSortDisableClear
+          [matSortActive]="paginationParams().sort ?? 'id'" [matSortDirection]="paginationParams().order ?? 'asc'"
+          #sort="matSort" (matSortChange)="onSortChange($event)" class="w-full">
 
         <!-- Squad Number Column -->
         <ng-container matColumnDef="squad_number">
@@ -211,17 +206,21 @@
 
       <!-- Pagination -->
       <div class="border-t border-browers-light-grey px-4 py-3">
-        <mat-paginator [length]="totalCount" [pageSize]="pageSize" [pageIndex]="currentPage"
-          [pageSizeOptions]="[5, 10, 20, 50]" (page)="onPageChange($event)" showFirstLastButtons>
+        <mat-paginator [length]="paginatedPlayersTotal" [pageSize]="paginationParams().pageSize"
+          [pageIndex]="paginationParams().page" [pageSizeOptions]="pageSizeOptions" (page)="onPageChange($event)"
+          showFirstLastButtons>
         </mat-paginator>
       </div>
     </div>
+    }
 
     <!-- Mobile Card View -->
-    <div class="lg:hidden space-y-4">
-      @for (player of dataSource.data; track player.id) {
-      <mat-card class="border border-browers-light-grey">
-        <mat-card-content class="p-4">
+    @if (!paginatedPlayers.isLoading() && !paginatedPlayers.error() && (paginatedPlayersItems.length > 0)) {
+      @let items = paginatedPlayersItems;
+      <div class="lg:hidden space-y-4">
+        @for (player of items; track player.id) {
+          <mat-card class="border border-browers-light-grey">
+            <mat-card-content class="p-4">
           <!-- Player Header -->
           <div class="flex items-start justify-between mb-2">
             <div class="flex items-center space-x-3">
@@ -318,26 +317,27 @@
       }
 
       <!-- Mobile Pagination -->
-      @if (totalCount > 0) {
-      <div class="mt-6">
-        <mat-paginator [length]="totalCount" [pageSize]="pageSize" [pageIndex]="currentPage"
-          [pageSizeOptions]="[5, 10, 20]" (page)="onPageChange($event)" showFirstLastButtons>
-        </mat-paginator>
-      </div>
+      @if (paginatedPlayersTotal > 0) {
+        <div class="mt-6">
+          <mat-paginator [length]="paginatedPlayersTotal" [pageSize]="paginationParams().pageSize"
+            [pageIndex]="paginationParams().page" [pageSizeOptions]="pageSizeOptions" (page)="onPageChange($event)"
+            showFirstLastButtons>
+          </mat-paginator>
+        </div>
       }
     </div>
+    }
 
     <!-- Empty State -->
-    @if (dataSource.data.length === 0 && !loading()) {
-    <div class="text-center py-12">
-      <mat-icon class="text-browers-silver text-6xl mb-4">group</mat-icon>
-      <h3 class="text-xl font-normal text-browers-black mb-2">No players found</h3>
-      <p class="text-browers-steel-grey mb-6">Get started by adding your first player to the team.</p>
-      <button mat-flat-button color="primary" class="bg-browers-deep-purple hover:bg-browers-purple"
-        (click)="addPlayer()">
-        <mat-icon>add</mat-icon>
-        Add First Player
-      </button>
-    </div>
-    }
+    @if (!paginatedPlayers.isLoading() && (paginatedPlayersItems.length === 0)) {
+      <div class="text-center py-12">
+        <mat-icon class="text-browers-silver text-6xl mb-4">group</mat-icon>
+        <h3 class="text-xl font-normal text-browers-black mb-2">No players found</h3>
+        <p class="text-browers-steel-grey mb-6">Get started by adding your first player to the team.</p>
+        <button mat-flat-button color="primary" class="bg-browers-deep-purple hover:bg-browers-purple"
+          (click)="addPlayer()">
+          <mat-icon>add</mat-icon>
+          Add First Player
+        </button>
+      </div>
     }

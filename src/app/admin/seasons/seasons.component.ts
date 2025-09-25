@@ -1,9 +1,8 @@
-import { Component, OnInit, AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, inject, signal, computed, ViewChild } from '@angular/core';
+import { Component, OnInit, OnDestroy, AfterViewInit, ChangeDetectionStrategy, inject, signal, computed, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { MatTableDataSource } from '@angular/material/table';
 import { PageEvent, MatPaginator } from '@angular/material/paginator';
-import { Sort, MatSort } from '@angular/material/sort';
-import { SeasonResponse, PaginationParams, ApiErrorResponse } from '../../core/interfaces';
+import { Sort } from '@angular/material/sort';
+import { SeasonResponse, PaginationParams } from '../../core/interfaces';
 import { MaterialModule } from '../../material/material.module';
 import { SeasonService } from '../../services/season/season.service';
 
@@ -17,30 +16,17 @@ import { SeasonService } from '../../services/season/season.service';
   styleUrls: ['./seasons.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class SeasonsComponent implements OnInit, AfterViewInit {
+export class SeasonsComponent implements OnInit, OnDestroy, AfterViewInit {
   private readonly seasonService = inject(SeasonService);
-  private readonly cdr = inject(ChangeDetectorRef);
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
-  @ViewChild(MatSort) sort!: MatSort;
 
-  // Signals for reactive state
-  protected readonly loading = signal<boolean>(false);
-  protected readonly error = signal<string | null>(null);
   protected readonly isMobile = signal<boolean>(false);
-
-  // MatTableDataSource for seasons and total count
-  protected readonly dataSource = new MatTableDataSource<SeasonResponse>([]);
-  protected readonly totalSeasons = signal<number>(0);
-
-  // Computed for responsive behavior
   protected readonly showMobileView = computed(() => this.isMobile());
 
-  // Table configuration
   protected readonly displayedColumns = ['id', 'year', 'start_date', 'end_date', 'is_current', 'created_at', 'updated_at', 'actions'];
   protected readonly pageSizeOptions = [5, 10, 25, 50];
 
-  // Pagination parameters using interface
   protected readonly paginationParams = signal<PaginationParams>({
     page: 0,
     pageSize: 5,
@@ -48,87 +34,48 @@ export class SeasonsComponent implements OnInit, AfterViewInit {
     order: 'desc'
   });
 
+  // Signal-powered resource for paginated seasons
+  protected readonly paginatedSeasons = this.seasonService.getSeasonsResource(this.paginationParams);
+
+  // Helper to get items from resource
+  protected get paginatedItems() {
+    return this.paginatedSeasons.value()?.data.items ?? [];
+  }
+
+  // Helper to get total count from resource
+  protected get paginatedTotal() {
+    return this.paginatedSeasons.value()?.data.total_count ?? 0;
+  }
+
+  private readonly resizeListener = () => this.checkScreenSize();
+
   ngOnInit(): void {
     this.checkScreenSize();
-    this.loadSeasons();
+    window.addEventListener('resize', this.resizeListener);
+  }
 
-    // Listen for window resize
-    window.addEventListener('resize', () => this.checkScreenSize());
+  ngOnDestroy(): void {
+    window.removeEventListener('resize', this.resizeListener);
   }
 
   ngAfterViewInit(): void {
-    // Setup MatTableDataSource with proper sorting only
-    // Do NOT assign paginator to dataSource as we handle pagination server-side
-    if (this.sort) {
-      this.dataSource.sort = this.sort;
-    }
-
-    // Configure paginator properly for server-side pagination
     if (this.paginator) {
-      const params = this.paginationParams();
-      this.paginator.pageIndex = params.page;
-      this.paginator.pageSize = params.pageSize;
+      this.paginator.page.subscribe(event => this.onPageChange(event));
     }
   }
 
-  /**
-   * Check screen size for responsive behavior
-   */
   private checkScreenSize(): void {
     this.isMobile.set(window.innerWidth < 768);
   }
 
-  /**
-   * Load seasons with pagination and sorting
-   */
-  protected loadSeasons(): void {
-    this.loading.set(true);
-    this.error.set(null);
-
-    const params = this.paginationParams();
-
-    this.seasonService.getSeasons(params).subscribe({
-      next: (response) => {
-        this.dataSource.data = response.items;
-        this.totalSeasons.set(response.total_count);
-
-        // Update paginator to reflect current state after change detection
-        setTimeout(() => {
-          if (this.paginator) {
-            this.paginator.pageIndex = params.page;
-            this.paginator.length = response.total_count;
-            this.cdr.detectChanges(); // Force change detection
-          }
-        }, 0);
-
-        this.loading.set(false);
-      },
-      error: (err: ApiErrorResponse) => {
-        console.error('Error loading seasons:', err);
-        this.error.set('Error loading seasons. Please try again.');
-        this.loading.set(false);
-      }
-    });
-  }
-
-  /**
-   * Handle page change event
-   */
   protected onPageChange(event: PageEvent): void {
-    // Update pagination parameters
     this.paginationParams.update(params => ({
       ...params,
-      page: event.pageIndex, // pageIndex is 0-based, which matches backend expectation
+      page: event.pageIndex,
       pageSize: event.pageSize
     }));
-
-    // Load the new data
-    this.loadSeasons();
   }
 
-  /**
-   * Handle sort change event
-   */
   protected onSortChange(sort: Sort): void {
     if (sort.direction) {
       this.paginationParams.update(params => ({
@@ -137,14 +84,12 @@ export class SeasonsComponent implements OnInit, AfterViewInit {
         order: sort.direction as 'asc' | 'desc'
       }));
     } else {
-      // Default sort when direction is ''
       this.paginationParams.update(params => ({
         ...params,
         sort: 'year',
         order: 'desc'
       }));
     }
-    this.loadSeasons();
   }
 
   /**
@@ -166,13 +111,6 @@ export class SeasonsComponent implements OnInit, AfterViewInit {
    */
   formatDate(dateString: string): string {
     return new Date(dateString).toLocaleDateString();
-  }
-
-  /**
-   * Get badge class for current season status
-   */
-  getCurrentBadgeClass(isCurrent: boolean): string {
-    return isCurrent ? 'current-badge' : 'inactive-badge';
   }
 
   /**

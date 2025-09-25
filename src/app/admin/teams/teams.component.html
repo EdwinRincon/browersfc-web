@@ -10,7 +10,7 @@
 
   <mat-card-content class="pt-6" id="teams-content">
     <!-- Loading skeleton with screen reader announcements -->
-    @if (loading()) {
+      @if (paginatedTeams.isLoading()) {
       <!-- Screen reader announcement for loading state -->
       <div class="sr-only" aria-live="polite">Loading teams data, please wait...</div>
 
@@ -71,22 +71,24 @@
     }
 
     <!-- Error message -->
-    @if (error(); as err) {
+      @if (paginatedTeams.error(); as err) {
       <div class="error-message flex items-center gap-2 text-red-600 mb-6" role="alert" aria-live="polite">
         <mat-icon aria-hidden="true">error</mat-icon>
         <span class="font-medium">Error:</span>
-        <span>{{ err }}</span>
+          <span>{{ err.message }}</span>
       </div>
     }
 
     <!-- Teams table/cards -->
-    @if (!loading() && !error() && dataSource.data.length > 0) {
+      @if (!paginatedTeams.isLoading() && !paginatedTeams.error() && (paginatedTeams.value()?.data?.items?.length ?? 0) > 0) {
+        @let items = paginatedTeams.value()?.data?.items ?? [];
+        @let total_count = paginatedTeams.value()?.data?.total_count ?? 0;
       <!-- Desktop Table View -->
       @if (!isMobile()) {
         <div class="table-container">
           <table
             mat-table
-            [dataSource]="dataSource"
+              [dataSource]="items"
             matSort
             matSortDisableClear
             [matSortActive]="paginationParams().sort ?? 'full_name'"
@@ -221,7 +223,7 @@
       <!-- Mobile Card View -->
       @if (isMobile()) {
         <div class="mobile-cards-container space-y-4">
-          @for (team of dataSource.data; track team.id) {
+          @for (team of items; track team.id) {
             <mat-card class="team-card bg-browers-white shadow-xs border border-browers-light-grey hover:shadow-md transition-shadow duration-200">
               <mat-card-content class="p-4">
                 <div class="flex justify-between items-start mb-3">
@@ -286,21 +288,21 @@
       }
 
       <!-- Paginator (responsive) -->
-      <mat-paginator
-        #paginator
-        [length]="totalTeams()"
-        [pageSize]="paginationParams().pageSize"
-        [pageIndex]="paginationParams().page"
-        [pageSizeOptions]="pageSizeOptions"
-        (page)="onPageChange($event)"
-        [showFirstLastButtons]="!isMobile()"
-        aria-label="Select page of teams"
-        class="border-t border-browers-light-grey bg-browers-white mt-4">
-      </mat-paginator>
+        <mat-paginator
+          #paginator
+          [length]="total_count"
+          [pageSize]="paginationParams().pageSize"
+          [pageIndex]="paginationParams().page"
+          [pageSizeOptions]="pageSizeOptions"
+          (page)="onPageChange($event)"
+          [showFirstLastButtons]="!isMobile()"
+          aria-label="Select page of teams"
+          class="border-t border-browers-light-grey bg-browers-white mt-4">
+        </mat-paginator>
     }
 
     <!-- No data message -->
-    @if (!loading() && !error() && dataSource.data.length === 0) {
+    @if (!paginatedTeams.isLoading() && !paginatedTeams.error() && (paginatedTeams.value()?.data?.items?.length ?? 0) === 0) {
       <div class="no-data-message">
         <mat-icon class="text-browers-silver text-6xl mb-4">groups</mat-icon>
         <p class="text-browers-steel-grey text-lg">No teams found.</p>

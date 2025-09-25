@@ -1,45 +1,18 @@
-import { Component, OnInit, AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, inject, signal, computed, ViewChild } from '@angular/core';
-
-import { MatTableDataSource } from '@angular/material/table';
-import { PageEvent, MatPaginator } from '@angular/material/paginator';
-import { Sort, MatSort } from '@angular/material/sort';
+import { Component, ChangeDetectionStrategy, inject, signal, computed } from '@angular/core';
 import { MatchResponse, PaginationParams } from '../../core/interfaces';
 import { MaterialModule } from '../../material/material.module';
 import { MatchService } from '../../services/match/match.service';
 
 @Component({
   selector: 'app-matches',
-  imports: [
-    MaterialModule
-],
+  imports: [MaterialModule],
   templateUrl: './matches.component.html',
   styleUrls: ['./matches.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-
-export class MatchesComponent implements OnInit, AfterViewInit {
+export class MatchesComponent {
   private readonly matchService = inject(MatchService);
-  private readonly cdr = inject(ChangeDetectorRef);
 
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
-  @ViewChild(MatSort) sort!: MatSort;
-
-  protected readonly loading = signal<boolean>(false);
-  protected readonly error = signal<string | null>(null);
-  protected readonly isMobile = signal<boolean>(false);
-
-  // MatTableDataSource for matches and total count
-  protected readonly dataSource = new MatTableDataSource<MatchResponse>([]);
-  protected readonly totalMatches = signal<number>(0);
-
-  // Computed for responsive behavior
-  protected readonly showMobileView = computed(() => this.isMobile());
-
-  // Table configuration
-  protected readonly displayedColumns = ['id', 'kickoff', 'home_team', 'away_team', 'score', 'status', 'location', 'season', 'created_at', 'updated_at', 'actions'];
-  protected readonly pageSizeOptions = [5, 10, 25, 50];
-
-  // Pagination parameters using interface
   protected readonly paginationParams = signal<PaginationParams>({
     page: 0,
     pageSize: 5,
@@ -47,86 +20,31 @@ export class MatchesComponent implements OnInit, AfterViewInit {
     order: 'desc'
   });
 
-  // Computed for template compatibility
-  protected readonly matchesArray = () => this.dataSource.data ?? [];
+  protected readonly paginatedMatches = this.matchService.getMatchesResource(this.paginationParams);
 
-  ngOnInit(): void {
-    this.checkIfMobile();
-    this.loadMatches();
+  protected readonly totalMatches = computed(() => this.paginatedMatches.value()?.data?.total_count ?? 0);
+  protected readonly matchesArray = computed(() => this.paginatedMatches.value()?.data?.items ?? []);
 
-    // Setup resize listener
-    window.addEventListener('resize', () => {
-      this.checkIfMobile();
-    });
-  }
+  protected readonly displayedColumns = ['id', 'kickoff', 'home_team', 'away_team', 'score', 'status', 'location', 'season', 'created_at', 'updated_at', 'actions'];
+  protected readonly pageSizeOptions = [5, 10, 25, 50];
 
-  ngAfterViewInit(): void {
-    if (this.paginator) {
-      this.dataSource.paginator = this.paginator;
-    }
-    if (this.sort) {
-      this.dataSource.sort = this.sort;
-    }
-  }
-
-  /**
-   * Check if current viewport is mobile
-   */
-  private checkIfMobile(): void {
-    this.isMobile.set(window.innerWidth < 768);
-  }
-
-  /**
-   * Load matches from API with pagination
-   */
-  protected loadMatches(): void {
-    this.loading.set(true);
-    this.error.set(null);
-
-    const params = this.paginationParams();
-    this.matchService.getMatches(params).subscribe({
-      next: (response) => {
-
-        const data = response.data;
-        this.dataSource.data = data.items || [];
-        this.totalMatches.set(data.total_count || 0);
-        this.loading.set(false);
-        this.cdr.markForCheck();
-      },
-      error: (error) => {
-        console.error('Error loading matches:', error);
-        this.error.set('Failed to load matches. Please try again.');
-        this.loading.set(false);
-        this.cdr.markForCheck();
-      }
-    });
-  }
-
-  /**
-   * Handle pagination changes
-   */
-  protected onPageChange(event: PageEvent): void {
+  protected onPageChange(event: { pageIndex: number; pageSize: number }): void {
     this.paginationParams.update(params => ({
       ...params,
       page: event.pageIndex,
       pageSize: event.pageSize
     }));
-    this.loadMatches();
   }
 
-  /**
-   * Handle sort changes
-   */
-  protected onSortChange(sort: Sort): void {
+  protected onSortChange(sort: { active: string; direction: 'asc' | 'desc' | '' }): void {
     if (sort.direction) {
       this.paginationParams.update(params => ({
         ...params,
         sort: sort.active,
         order: sort.direction as 'asc' | 'desc',
-        page: 0 // Reset to first page when sorting
+        page: 0
       }));
     } else {
-      // Reset to default sort
       this.paginationParams.update(params => ({
         ...params,
         sort: 'kickoff',
@@ -134,12 +52,8 @@ export class MatchesComponent implements OnInit, AfterViewInit {
         page: 0
       }));
     }
-    this.loadMatches();
   }
 
-  /**
-   * Get status display text
-   */
   protected getStatusDisplay(status: string): string {
     const statuses: Record<string, string> = {
       'scheduled': 'Scheduled',
@@ -151,9 +65,6 @@ export class MatchesComponent implements OnInit, AfterViewInit {
     return statuses[status] || status;
   }
 
-  /**
-   * Get status badge color
-   */
   protected getStatusColor(status: string): string {
     const colors: Record<string, string> = {
       'scheduled': 'scheduled',
@@ -165,9 +76,6 @@ export class MatchesComponent implements OnInit, AfterViewInit {
     return colors[status] || 'default';
   }
 
-  /**
-   * Get match result display
-   */
   protected getMatchResult(match: MatchResponse): string {
     if (match.status === 'finished' && match.home_goals !== undefined && match.away_goals !== undefined) {
       return `${match.home_goals} - ${match.away_goals}`;
@@ -175,9 +83,6 @@ export class MatchesComponent implements OnInit, AfterViewInit {
     return 'vs';
   }
 
-  /**
-   * Format time for display
-   */
   protected formatTime(dateString: string): string {
     const date = new Date(dateString);
     return date.toLocaleTimeString('en-US', {
@@ -186,16 +91,10 @@ export class MatchesComponent implements OnInit, AfterViewInit {
     });
   }
 
-  /**
-   * Format date for display
-   */
   protected formatDate(dateString: string): string {
-   return new Date(dateString).toLocaleDateString();
+    return new Date(dateString).toLocaleDateString();
   }
 
-  /**
-   * Actions
-   */
   protected editMatch(match: MatchResponse): void {
     console.log('Edit match:', match);
     // TODO: Implement edit functionality
@@ -211,7 +110,4 @@ export class MatchesComponent implements OnInit, AfterViewInit {
     // TODO: Implement add functionality
   }
 
-  protected refreshData(): void {
-    this.loadMatches();
-  }
 }

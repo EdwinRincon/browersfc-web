@@ -1,44 +1,28 @@
-import { ChangeDetectionStrategy, Component, OnInit, signal, inject, ViewChild, AfterViewInit, ChangeDetectorRef, OnDestroy, computed } from '@angular/core';
 
-import { MatTableDataSource } from '@angular/material/table';
-import { MatPaginator, PageEvent } from '@angular/material/paginator';
-import { MatSort, Sort } from '@angular/material/sort';
-import { map } from 'rxjs/operators';
 import { PlayerStatsService } from '../../services/player-stats/player-stats.service';
-import { PlayerStatsResponse, PaginationParams, ApiSuccessResponse, PaginatedResponse } from '../../core/interfaces';
+import { PlayerStatsResponse, PaginationParams } from '../../core/interfaces';
 import { MaterialModule } from '../../material/material.module';
+import { PageEvent } from '@angular/material/paginator';
+import { Sort } from '@angular/material/sort';
+import { computed, signal, inject, ChangeDetectionStrategy, Component, OnDestroy } from '@angular/core';
+
 
 @Component({
   selector: 'app-player-stats',
   templateUrl: './player-stats.component.html',
   styleUrls: ['./player-stats.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    MaterialModule
-]
+  imports: [MaterialModule]
 })
 
-export class PlayerStatsComponent implements OnInit, AfterViewInit, OnDestroy {
-
+export class PlayerStatsComponent implements OnDestroy {
   private readonly playerStatsService = inject(PlayerStatsService);
-  private readonly cdr = inject(ChangeDetectorRef);
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
-  @ViewChild(MatSort) sort!: MatSort;
-
-  // Signals for state management
-  protected readonly loading = signal<boolean>(false);
-  protected readonly error = signal<string | null>(null);
-  protected readonly isMobile = signal<boolean>(false);
-
-  // MatTableDataSource for better data management
-  protected readonly dataSource = new MatTableDataSource<PlayerStatsResponse>([]);
-  protected readonly totalStats = signal<number>(0);
 
   // Table configuration
   protected readonly displayedColumns = ['player', 'match', 'stats', 'actions'];
   protected readonly pageSizeOptions = [10, 20, 50];
 
-  // Pagination parameters using interface
+  // Pagination and sorting state
   protected readonly paginationParams = signal<PaginationParams>({
     page: 0,
     pageSize: 10,
@@ -46,72 +30,31 @@ export class PlayerStatsComponent implements OnInit, AfterViewInit, OnDestroy {
     order: 'desc'
   });
 
+  // Responsive state
+  protected readonly isMobile = signal(window.innerWidth < 768);
   protected readonly showMobileView = computed(() => this.isMobile());
 
-  ngOnInit(): void {
-    this.checkScreenSize();
-    this.loadPlayerStats();
+  // Resource for paginated player stats
+  protected readonly paginatedPlayerStats = this.playerStatsService.getPlayerStatsResource(this.paginationParams);
 
-    // listen for resize
+  // Getters for items and total
+  protected get paginatedItems() {
+    return this.paginatedPlayerStats.value()?.data.items ?? [];
+  }
+
+  protected get paginatedTotal() {
+    return this.paginatedPlayerStats.value()?.data.total_count ?? 0;
+  }
+
+  constructor() {
     window.addEventListener('resize', this.onResize);
   }
 
-  ngAfterViewInit(): void {
-    if (this.sort) {
-      this.dataSource.sort = this.sort;
-    }
-    if (this.paginator) {
-      const params = this.paginationParams();
-      this.paginator.pageIndex = params.page;
-      this.paginator.pageSize = params.pageSize;
-    }
-  }
-
-  ngOnDestroy(): void {
-    // cleanup resize listener
-    window.removeEventListener('resize', this.onResize);
-  }
-
   private readonly onResize = () => {
-    this.checkScreenSize();
-  }
-
-  private checkScreenSize(): void {
     this.isMobile.set(window.innerWidth < 768);
-  }
+  };
 
-  protected loadPlayerStats(): void {
-    this.loading.set(true);
-    this.error.set(null);
-    const params = this.paginationParams();
-    this.playerStatsService.getPlayerStats(params)
-      .pipe(
-        map((res: ApiSuccessResponse<PaginatedResponse<PlayerStatsResponse>>) => res.data)
-      )
-      .subscribe({
-        next: (pag: PaginatedResponse<PlayerStatsResponse>) => {
-          this.dataSource.data = pag.items || [];
-          this.totalStats.set(pag.total_count || 0);
-          setTimeout(() => {
-            if (this.paginator) {
-              this.paginator.pageIndex = params.page;
-              this.paginator.length = pag.total_count || 0;
-              this.cdr.detectChanges();
-            }
-          }, 0);
-          this.loading.set(false);
-        },
-        error: (err) => {
-          this.error.set('Error loading player statistics');
-          this.loading.set(false);
-          console.error('Error loading player statistics:', err);
-        }
-      });
-  }
-
-  /**
-   * Handle server-side sorting
-   */
+  // Sorting handler
   protected onSortChange(sort: Sort): void {
     if (sort.direction) {
       this.paginationParams.update(params => ({
@@ -126,34 +69,37 @@ export class PlayerStatsComponent implements OnInit, AfterViewInit, OnDestroy {
         order: 'desc'
       }));
     }
-    this.loadPlayerStats();
   }
 
-  formatDate(dateString: string): string {
-    return new Date(dateString).toUTCString();
-  }
-
+  // Pagination handler
   onPageChange(event: PageEvent): void {
     this.paginationParams.update(params => ({
       ...params,
       page: event.pageIndex,
       pageSize: event.pageSize
     }));
-    this.loadPlayerStats();
+  }
+
+  formatDate(dateString: string): string {
+    return new Date(dateString).toUTCString();
   }
 
   editStats(stats: PlayerStatsResponse): void {
+    // TODO: Implement edit dialog
     console.log('Edit stats:', stats);
-    // Implementation pending
   }
 
   deleteStats(stats: PlayerStatsResponse): void {
+    // TODO: Implement delete dialog
     console.log('Delete stats:', stats);
-    // Implementation pending
   }
 
   addStats(): void {
+    // TODO: Implement add dialog
     console.log('Add new stats');
-    // Implementation pending
+  }
+
+  ngOnDestroy(): void {
+    window.removeEventListener('resize', this.onResize);
   }
 }

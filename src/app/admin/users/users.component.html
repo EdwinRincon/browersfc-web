@@ -10,7 +10,7 @@
 
   <mat-card-content class="pt-6" id="users-content">
     <!-- Loading skeleton with screen reader announcements -->
-    @if (loading()) {
+  @if (paginatedUsers.isLoading()) {
       <!-- Screen reader announcement for loading state -->
       <div class="sr-only" aria-live="polite">Loading users data, please wait...</div>
 
@@ -69,24 +69,25 @@
     }
 
     <!-- Error message -->
-    @if (error(); as err) {
+    @if (paginatedUsers.error(); as err) {
       <div class="error-message flex items-center gap-2 text-red-600 mb-6" role="alert" aria-live="polite">
         <mat-icon aria-hidden="true">error</mat-icon>
         <span class="font-medium">Error:</span>
-        <span>{{ err }}</span>
+        <span>{{ err.message }}</span>
       </div>
     }
 
     <!-- Users table/cards -->
-    @if (!loading() && !error() && dataSource.data.length > 0) {
+    @if (!paginatedUsers.isLoading() && !paginatedUsers.error() && (paginatedUsers.value()?.data?.items?.length ?? 0) > 0) {
+      @let items = paginatedUsers.value()?.data?.items ?? [];
+      @let total_count = paginatedUsers.value()?.data?.total_count ?? 0;
       <!-- Desktop Table View -->
       @if (!isMobile()) {
         <div class="table-container">
           <table
             mat-table
-            [dataSource]="dataSource"
+            [dataSource]="items"
             matSort
-            #sort="matSort"
             (matSortChange)="onSortChange($event)"
             [matSortActive]="paginationParams().sort ?? 'created_at'"
             [matSortDirection]="paginationParams().order ?? 'desc'"
@@ -192,7 +193,7 @@
       <!-- Mobile Card View -->
       @if (isMobile()) {
         <div class="mobile-cards-container space-y-4">
-          @for (user of dataSource.data; track user.id) {
+          @for (user of items; track user.id) {
             <mat-card class="user-card bg-browers-white shadow-xs border border-browers-light-grey hover:shadow-md transition-shadow duration-200">
               <mat-card-content class="p-4">
                 <div class="flex justify-between items-start mb-3">
@@ -250,7 +251,7 @@
       <!-- Paginator (responsive) -->
       <mat-paginator
         #paginator
-        [length]="totalUsers()"
+        [length]="total_count"
         [pageSize]="paginationParams().pageSize"
         [pageIndex]="paginationParams().page"
         [pageSizeOptions]="pageSizeOptions"
@@ -262,7 +263,7 @@
     }
 
     <!-- No data message -->
-    @if (!loading() && !error() && dataSource.data.length === 0) {
+    @if (!paginatedUsers.isLoading() && !paginatedUsers.error() && (paginatedUsers.value()?.data?.items?.length ?? 0) === 0) {
       <div class="no-data-message">
         <mat-icon class="text-browers-silver text-6xl mb-4">people_outline</mat-icon>
         <p class="text-browers-steel-grey text-lg">No users found.</p>

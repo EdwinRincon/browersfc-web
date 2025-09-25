@@ -1,10 +1,10 @@
-import { ChangeDetectionStrategy, Component, inject, signal, computed, Output, EventEmitter } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal, computed, Output, EventEmitter, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { PlayerService } from '../../services/player/player.service';
 import { MatchService } from '../../services/match/match.service';
 
-import { PlayerShort } from '../../core/interfaces/player.interface';
+import { PlayerShort, PlayerResponse } from '../../core/interfaces/player.interface';
 import { MatchResponse } from '../../core/interfaces/match.interface';
 import { ApiSuccessResponse, PaginatedResponse } from '../../core/interfaces';
 import { FORMATION_POSITIONS, POSITION_DISPLAY_NAMES, SevenASideFormation, PlayerSlot } from './pitch-config';
@@ -20,6 +20,7 @@ export class AdminLineupPitchComponent {
 
   private readonly playerService = inject(PlayerService);
   private readonly matchService = inject(MatchService);
+  private readonly cdr = inject(ChangeDetectorRef);
 
   @Output() saveLineup = new EventEmitter<{
     matchId: number;
@@ -55,20 +56,34 @@ export class AdminLineupPitchComponent {
     this.loadMatches();
   }
 
-  // --- Lifecycle fetching ---
-  private loadPlayers(): void {
-    this.playerService.getPlayers().subscribe({
-      next: resp => this.players.set(resp.items || []),
-      error: () => this.players.set([])
-    });
-  }
+private loadPlayers(): void {
+  this.playerService.getPlayers({ page: 0, pageSize: 30 }).subscribe({
+    next: (resp) => {
+      const items = (resp as any).data?.items ?? resp.items ?? [];
+      const shorts = items.map((player: PlayerResponse) => ({
+        id: player.id,
+        nick_name: player.nick_name,
+        position: player.position
+      }));
+      this.players.set(shorts);
+      this.cdr.detectChanges();
+    },
+    error: () => {
+      this.players.set([]);
+      this.cdr.detectChanges();
+    }
+  });
+}
+
 
   private loadMatches(): void {
-    this.matchService.getMatches().subscribe({
-      next: (resp: ApiSuccessResponse<PaginatedResponse<MatchResponse>>) =>
+    this.matchService.getMatches({ page: 0, pageSize: 20, sort: 'kickoff', order: 'desc' }).subscribe({
+      next: (resp) => {
+        const items = (resp as any).data?.items ?? resp.items ?? [];
         this.matchOptions.set(
-          (resp.data.items || []).filter(m => ['scheduled', 'in_progress'].includes(m.status))
-        ),
+          items.filter((m: MatchResponse) => ['scheduled', 'in_progress'].includes(m.status))
+        );
+      },
       error: () => this.matchOptions.set([])
     });
   }

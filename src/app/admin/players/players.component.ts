@@ -1,6 +1,5 @@
-import { Component, OnInit, AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, inject, signal, ViewChild } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject, signal, ViewChild, OnInit, OnDestroy, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { PlayerResponse, PaginationParams } from '../../core/interfaces';
 import { Sort, MatSort } from '@angular/material/sort';
@@ -17,27 +16,17 @@ import { PlayerService } from '../../services/player/player.service';
   styleUrls: ['./players.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class PlayersComponent implements OnInit, AfterViewInit {
+
+export class PlayersComponent implements OnInit, OnDestroy, AfterViewInit {
   private readonly playerService = inject(PlayerService);
-  private readonly cdr = inject(ChangeDetectorRef);
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
-  // Signals for reactive state
-  protected readonly loading = signal<boolean>(false);
-  protected readonly error = signal<string | null>(null);
   protected readonly isMobile = signal<boolean>(false);
-
-  // MatTableDataSource for players and total count
-  protected readonly dataSource = new MatTableDataSource<PlayerResponse>([]);
-  protected readonly totalPlayers = signal<number>(0);
-
-  // Table configuration (match template columns)
   protected readonly displayedColumns = ['squad_number', 'nick_name', 'position', 'age', 'country', 'height', 'foot', 'rating', 'matches', 'goals', 'assists', 'injured', 'actions'];
   protected readonly pageSizeOptions = [5, 10, 25, 50];
 
-  // Pagination parameters using interface
   protected readonly paginationParams = signal<PaginationParams>({
     page: 0,
     pageSize: 10,
@@ -45,79 +34,62 @@ export class PlayersComponent implements OnInit, AfterViewInit {
     order: 'asc'
   });
 
+  // Signal-powered resource for paginated players
+  protected readonly paginatedPlayers = this.playerService.getPlayersResource(this.paginationParams);
+
+  get paginatedPlayersItems() {
+    return this.paginatedPlayers.value()?.data.items ?? [];
+  }
+  get paginatedPlayersTotal() {
+    return this.paginatedPlayers.value()?.data.total_count ?? 0;
+  }
+
+  private readonly resizeListener = () => this.checkScreenSize();
+
   ngOnInit(): void {
     this.checkScreenSize();
-    this.loadPlayers();
-    window.addEventListener('resize', () => this.checkScreenSize());
+    window.addEventListener('resize', this.resizeListener);
+  }
+
+  ngOnDestroy(): void {
+    window.removeEventListener('resize', this.resizeListener);
   }
 
   ngAfterViewInit(): void {
-    if (this.sort) {
-      this.dataSource.sort = this.sort;
-    }
     if (this.paginator) {
-      const params = this.paginationParams();
-      this.paginator.pageIndex = params.page;
-      this.paginator.pageSize = params.pageSize;
+      this.paginator.page.subscribe(event => this.onPageChange(event));
     }
   }
 
-    protected onSortChange(sort: Sort): void {
-      if (sort.direction) {
-        this.paginationParams.update(params => ({
-          ...params,
-          sort: sort.active,
-          order: sort.direction as 'asc' | 'desc'
-        }));
-      } else {
-        this.paginationParams.update(params => ({
-          ...params,
-          sort: 'id',
-          order: 'asc'
-        }));
-      }
-      this.loadPlayers();
-    }
-
-  /**
-   * Check screen size for responsive behavior
-   */
   private checkScreenSize(): void {
     this.isMobile.set(window.innerWidth < 768);
   }
 
-  /**
-   * Load players with pagination and sorting
-   */
-  protected loadPlayers(): void {
-    this.loading.set(true);
-    this.error.set(null);
-    const params = this.paginationParams();
-    this.playerService.getPlayers(params).subscribe({
-      next: (response) => {
-        const data = (response as any).data || response;
-        const pag = data as { items: PlayerResponse[]; total_count: number };
-        this.dataSource.data = pag.items || [];
-        this.totalPlayers.set(pag.total_count || 0);
-        setTimeout(() => {
-          if (this.paginator) {
-            this.paginator.pageIndex = params.page;
-            this.paginator.length = pag.total_count || 0;
-            this.cdr.detectChanges();
-          }
-        }, 0);
-        this.loading.set(false);
-      },
-      error: (error) => {
-        console.error('Error loading players:', error);
-        this.error.set('Failed to load players. Please try again.');
-        this.loading.set(false);
-      }
-    });
+  protected onPageChange(event: any): void {
+    this.paginationParams.update(params => ({
+      ...params,
+      page: event.pageIndex,
+      pageSize: event.pageSize
+    }));
   }
 
+  protected onSortChange(sort: Sort): void {
+    if (sort.direction) {
+      this.paginationParams.update(params => ({
+        ...params,
+        sort: sort.active,
+        order: sort.direction as 'asc' | 'desc'
+      }));
+    } else {
+      this.paginationParams.update(params => ({
+        ...params,
+        sort: 'id',
+        order: 'asc'
+      }));
+    }
+  }
 
-    protected getPositionColor(position: string): string {
+  protected getPositionColor(position: string): string {
     const colors: Record<string, string> = {
       'por': 'bg-yellow-100 text-yellow-800',
       'ceni': 'bg-blue-100 text-blue-800',
@@ -132,24 +104,17 @@ export class PlayersComponent implements OnInit, AfterViewInit {
     return colors[position] || 'bg-gray-100 text-gray-800';
   }
 
-
-  /**
-   * Get country flag URL
-   */
   protected getCountryFlag(countryCode: string): string {
     return `https://flagcdn.com/w20/${countryCode.toLowerCase()}.png`;
   }
 
-  /**
-   * Get injury status text
-   */
   protected isPlayerInjured(injured: boolean): boolean {
     return injured === true;
   }
 
   protected isPlayerAvailable(injured: boolean): boolean {
     return injured === false;
-  } 
+  }
 
   protected addPlayer(): void {
     //TODO: Implementation pending: open add player dialog or navigate to add player page
@@ -161,31 +126,5 @@ export class PlayersComponent implements OnInit, AfterViewInit {
 
   protected deletePlayer(player: PlayerResponse): void {
     //TODO: Implementation pending: show confirmation and call service
-  }
-
-  // Pagination getters used by template
-  get totalCount(): number {
-    return this.totalPlayers();
-  }
-
-  get pageSize(): number {
-    return this.paginationParams().pageSize;
-  }
-
-  get currentPage(): number {
-    return this.paginationParams().page;
-  }
-
-  protected onPageChange(event: any): void {
-    this.paginationParams.update(params => ({
-      ...params,
-      page: event.pageIndex,
-      pageSize: event.pageSize
-    }));
-    this.loadPlayers();
-  }
-
-  protected refreshData(): void {
-    this.loadPlayers();
   }
 }

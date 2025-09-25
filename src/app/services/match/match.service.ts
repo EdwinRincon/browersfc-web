@@ -1,11 +1,10 @@
-import { Injectable, inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { Injectable, inject, Signal } from '@angular/core';
+import { HttpClient, httpResource } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { 
-  MatchResponse, 
-  CreateMatchRequest, 
+import {
+  MatchResponse,
+  CreateMatchRequest,
   UpdateMatchRequest,
-  ApiSuccessResponse,
   PaginatedResponse,
   PaginationParams
 } from '../../core/interfaces';
@@ -16,42 +15,50 @@ import { environment } from '../../../environments/environment';
 })
 export class MatchService {
   private readonly http = inject(HttpClient);
-  private readonly apiUrl = `${environment.API_URL}/matches`;
+  private readonly baseUrl = `${environment.API_URL}/matches`;
+  private readonly adminBaseUrl = `${environment.API_URL}/admin/matches`;
 
-  getMatches(pagination?: PaginationParams): Observable<ApiSuccessResponse<PaginatedResponse<MatchResponse>>> {
-    let url = this.apiUrl;
-    if (pagination) {
-      const params = new URLSearchParams();
-      params.append('page', pagination.page.toString());
-      params.append('pageSize', pagination.pageSize.toString());
-      if (pagination.sort) {
-        params.append('sort', pagination.sort);
+  // --- Public Endpoints ---
+  getMatches(params: PaginationParams): Observable<PaginatedResponse<MatchResponse>> {
+    return this.http.get<PaginatedResponse<MatchResponse>>(this.baseUrl, { params: {
+      page: params.page.toString(),
+      pageSize: params.pageSize.toString(),
+      sort: params.sort || 'kickoff',
+      order: params.order || 'desc'
+    }});
+  }
+
+  getMatch(id: number): Observable<MatchResponse> {
+    return this.http.get<MatchResponse>(`${this.baseUrl}/${id}`);
+  }
+
+  getMatchesResource(paginationParams: Signal<PaginationParams>) {
+    return httpResource<{ data: PaginatedResponse<MatchResponse> }>(() => ({
+      url: this.baseUrl,
+      method: 'GET',
+      params: {
+        page: paginationParams().page.toString(),
+        pageSize: paginationParams().pageSize.toString(),
+        sort: paginationParams().sort ?? 'kickoff',
+        order: paginationParams().order ?? 'desc'
       }
-      if (pagination.order) {
-        params.append('order', pagination.order);
-      }
-      url += `?${params.toString()}`;
-    }
-    return this.http.get<ApiSuccessResponse<PaginatedResponse<MatchResponse>>>(url);
+    }));
   }
 
-  getMatch(id: number): Observable<ApiSuccessResponse<MatchResponse>> {
-    return this.http.get<ApiSuccessResponse<MatchResponse>>(`${this.apiUrl}/${id}`);
+  // --- Admin Endpoints ---
+  createMatch(match: CreateMatchRequest): Observable<MatchResponse> {
+    return this.http.post<MatchResponse>(this.adminBaseUrl, match);
   }
 
-  createMatch(match: CreateMatchRequest): Observable<ApiSuccessResponse<MatchResponse>> {
-    return this.http.post<ApiSuccessResponse<MatchResponse>>(this.apiUrl, match);
+  updateMatch(id: number, match: UpdateMatchRequest): Observable<MatchResponse> {
+    return this.http.put<MatchResponse>(`${this.adminBaseUrl}/${id}`, match);
   }
 
-  updateMatch(id: number, match: UpdateMatchRequest): Observable<ApiSuccessResponse<MatchResponse>> {
-    return this.http.put<ApiSuccessResponse<MatchResponse>>(`${this.apiUrl}/${id}`, match);
+  deleteMatch(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.adminBaseUrl}/${id}`);
   }
 
-  deleteMatch(id: number): Observable<ApiSuccessResponse<void>> {
-    return this.http.delete<ApiSuccessResponse<void>>(`${this.apiUrl}/${id}`);
-  }
-
-  getAllMatches(): Observable<ApiSuccessResponse<MatchResponse[]>> {
-    return this.http.get<ApiSuccessResponse<MatchResponse[]>>(`${this.apiUrl}/all`);
+  getAllMatches(): Observable<MatchResponse[]> {
+    return this.http.get<MatchResponse[]>(`${this.baseUrl}/all`);
   }
 }

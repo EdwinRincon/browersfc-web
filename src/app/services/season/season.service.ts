@@ -1,20 +1,18 @@
-import { Injectable, inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
 
+import { Injectable, inject, Signal } from '@angular/core';
+import { HttpClient, httpResource } from '@angular/common/http';
+import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import {
   SeasonResponse,
   CreateSeasonRequest,
   UpdateSeasonRequest,
-  ApiSuccessResponse,
   PaginatedResponse,
-  PaginationParams,
+  PaginationParams
 } from '../../core/interfaces';
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: 'root'
 })
 export class SeasonService {
   private readonly http = inject(HttpClient);
@@ -29,62 +27,49 @@ export class SeasonService {
       page: params.page.toString(),
       pageSize: params.pageSize.toString(),
       sort: params.sort || 'year',
-      order: params.order || 'desc',
+      order: params.order || 'desc'
     };
-
-    return this.http
-      .get<ApiSuccessResponse<PaginatedResponse<SeasonResponse>>>(this.baseUrl, {
-        params: queryParams,
-      })
-      .pipe(map((response) => response.data));
+    return this.http.get<PaginatedResponse<SeasonResponse>>(
+      this.baseUrl, { params: queryParams }
+    );
   }
 
   /**
    * Get a specific season by ID
    */
   getSeasonById(id: number): Observable<SeasonResponse> {
-    return this.http
-      .get<ApiSuccessResponse<SeasonResponse>>(`${this.baseUrl}/${id}`)
-      .pipe(map((response) => response.data));
+    return this.http.get<SeasonResponse>(`${this.baseUrl}/${id}`);
   }
 
   /**
    * Get the current active season
    */
   getCurrentSeason(): Observable<SeasonResponse> {
-    return this.http
-      .get<ApiSuccessResponse<SeasonResponse>>(`${this.baseUrl}/current`)
-      .pipe(map((response) => response.data));
+    return this.http.get<SeasonResponse>(`${this.baseUrl}/current`);
   }
 
   /**
    * Create a new season (admin only)
    */
   createSeason(seasonData: CreateSeasonRequest): Observable<SeasonResponse> {
-    return this.http
-      .post<ApiSuccessResponse<SeasonResponse>>(this.adminBaseUrl, seasonData)
-      .pipe(map((response) => response.data));
+    return this.http.post<SeasonResponse>(this.adminBaseUrl, seasonData);
   }
 
   /**
    * Update an existing season (admin only)
    */
   updateSeason(id: number, seasonData: UpdateSeasonRequest): Observable<SeasonResponse> {
-    return this.http
-      .put<ApiSuccessResponse<SeasonResponse>>(`${this.adminBaseUrl}/${id}`, seasonData)
-      .pipe(map((response) => response.data));
+    return this.http.put<SeasonResponse>(`${this.adminBaseUrl}/${id}`, seasonData);
   }
 
   /**
    * Set a season as the current active season (admin only)
    */
   setCurrentSeason(id: number): Observable<{ message: string; id: number }> {
-    return this.http
-      .put<ApiSuccessResponse<{ message: string; id: number }>>(
-        `${this.adminBaseUrl}/${id}/set-current`,
-        {}
-      )
-      .pipe(map((response) => response.data));
+    return this.http.put<{ message: string; id: number }>(
+      `${this.adminBaseUrl}/${id}/set-current`,
+      {}
+    );
   }
 
   /**
@@ -94,10 +79,26 @@ export class SeasonService {
     return this.http.delete<void>(`${this.adminBaseUrl}/${id}`);
   }
 
-
+  /**
+   * Get all seasons (non-paginated, for dropdowns etc)
+   */
   getAllSeasons(): Observable<SeasonResponse[]> {
-    return this.getSeasons({ page: 0, pageSize: 100, sort: 'year', order: 'desc' }).pipe(
-      map((response) => response.items)
-    );
+    return this.http.get<SeasonResponse[]>(`${this.baseUrl}/all`);
+  }
+
+  /**
+   * Signal-powered paginated seasons resource
+   */
+  getSeasonsResource(paginationParams: Signal<PaginationParams>) {
+    return httpResource<{ data: PaginatedResponse<SeasonResponse> }>(() => ({
+      url: this.baseUrl,
+      method: 'GET',
+      params: {
+        page: paginationParams().page.toString(),
+        pageSize: paginationParams().pageSize.toString(),
+        sort: paginationParams().sort ?? 'year',
+        order: paginationParams().order ?? 'desc'
+      }
+    }));
   }
 }

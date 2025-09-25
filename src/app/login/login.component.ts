@@ -1,7 +1,7 @@
-import { Component, ChangeDetectionStrategy, inject, signal, OnInit } from '@angular/core';
-
+import { Component, ChangeDetectionStrategy, inject, signal, OnInit, DestroyRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { AuthService } from '../services/auth/auth.service';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { AuthService, AppError } from '../services/auth/auth.service';
 
 type AuthErrorType =
   | 'auth_failed'
@@ -17,13 +17,13 @@ type AuthErrorType =
   selector: 'app-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css'],
-  imports: [],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LoginComponent implements OnInit {
   private readonly authService = inject(AuthService);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
+  private readonly destroyRef = inject(DestroyRef);
 
   protected readonly isLoading = signal(false);
   protected readonly errorMessage = signal<string | null>(null);
@@ -45,13 +45,12 @@ export class LoginComponent implements OnInit {
   }
 
   private checkAuthRedirect(): void {
-    if (!this.authService.isAuthenticated()) {
-      return;
-    }
+    if (!this.authService.isAuthenticated()) return;
+
     if (this.authService.isAdmin()) {
-      this.router.navigate(['/admin']);
+      this.router.navigateByUrl('/admin');
     } else {
-      this.router.navigate(['/home']);
+      this.router.navigateByUrl('/home');
     }
   }
 
@@ -66,33 +65,38 @@ export class LoginComponent implements OnInit {
     this.isLoading.set(true);
     this.errorMessage.set(null);
 
-    this.authService.loginWithGoogle().subscribe({
-      next: () => {
-        // Success - user will be redirected to Google OAuth, so we don't need to reset loading here
-      },
-      error: (error) => {
-        console.error('Failed to start Google authentication:', error);
-        this.isLoading.set(false);
-        
-        // Handle different types of errors
-        if (error.message?.includes('API URL is not configured')) {
-          this.setErrorMessage('config_error');
-        } else if (error.message?.includes('Google OAuth URL is undefined')) {
-          this.setErrorMessage('oauth_url_error');
-        } else if (error.errorType === 'timeout' || error.message?.includes('Timeout')) {
-          this.setErrorMessage('timeout_error');
-        } else if (error.errorType === 'network' || error.originalError?.status === 0) {
-          this.setErrorMessage('network_error');
-        } else if (error.errorType === 'server' || error.originalError?.status >= 500) {
-          this.setErrorMessage('server_error');
-        } else {
-          this.setErrorMessage('auth_failed');
+    this.authService.loginWithGoogle()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => {
+          // Redirect handled by OAuth flow, no need to unset loading
+        },
+        error: (err: AppError) => {
+          console.error('Failed to start Google authentication:', err);
+          this.isLoading.set(false);
+          const authError = this.mapAuthError(err);
+          this.setErrorMessage(authError);
         }
-      }
-    });
+      });
   }
 
   private setErrorMessage(errorType: AuthErrorType): void {
-    this.errorMessage.set(LoginComponent.ERROR_MESSAGES[errorType] ?? LoginComponent.ERROR_MESSAGES.unknown);
+    this.errorMessage.set(
+      LoginComponent.ERROR_MESSAGES[errorType] ?? LoginComponent.ERROR_MESSAGES.unknown
+    );
   }
+
+  private readonly mapAuthError = (error: AppError): AuthErrorType => {
+    if (!error) return 'unknown';
+    if (error.message?.includes('API URL is not configured')) return 'config_error';
+    if (error.message?.includes('Google OAuth URL is undefined')) return 'oauth_url_error';
+
+    switch (error.errorType) {
+      case 'timeout': return 'timeout_error';
+      case 'network': return 'network_error';
+      case 'server': return 'server_error';
+      case 'client': return 'auth_failed';
+      default: return 'unknown';
+    }
+  };
 }

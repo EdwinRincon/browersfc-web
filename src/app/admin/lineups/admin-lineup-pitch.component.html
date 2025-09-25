@@ -133,12 +133,15 @@
         aria-label="Close">&times;</button>
     </div>
     <div class="space-y-2 max-h-80 overflow-y-auto">
+      @if (players().length === 0) {
+        <div class="text-red-600 font-bold">No players loaded</div>
+      }
       @for (player of players(); track player.id) {
-      <button
-        class="w-full px-4 py-2 rounded bg-browers-light-grey text-browers-black font-medium hover:bg-browers-lavender disabled:opacity-50"
-        [disabled]="isPlayerAlreadySelectedAnywhere(player.id)" (click)="onPlayerSelected(player)">
-        {{ player.nick_name }} <span class="ml-2 text-xs text-browers-steel-grey">({{ player.position }})</span>
-      </button>
+        <button
+          class="w-full px-4 py-2 rounded bg-browers-light-grey text-browers-black font-medium hover:bg-browers-lavender disabled:opacity-50"
+          [disabled]="isPlayerAlreadySelectedAnywhere(player.id)" (click)="onPlayerSelected(player)">
+          {{ player.nick_name }} <span class="ml-2 text-xs text-browers-steel-grey">({{ player.position }})</span>
+        </button>
       }
     </div>
   </div>
