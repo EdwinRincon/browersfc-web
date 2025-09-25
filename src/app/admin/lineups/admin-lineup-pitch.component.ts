@@ -1,95 +1,213 @@
-import { ChangeDetectionStrategy, Component, signal, computed } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal, computed, Output, EventEmitter } from '@angular/core';
+import { CommonModule } from '@angular/common';
 
-export type SevenASideFormation = '3-2-1' | '2-3-1';
+import { PlayerService } from '../../services/player/player.service';
+import { MatchService } from '../../services/match/match.service';
 
-export interface PitchPosition {
-  x: number; // Percentage from left
-  y: number; // Percentage from top
-}
-
-export interface PlayerSlot {
-  id: number;
-  position: PitchPosition;
-  playerName?: string;
-  positionType: string;
-}
-
-// Position display names for accessibility
-const POSITION_DISPLAY_NAMES: Record<string, string> = {
-  'por': 'Portero',
-  'ceni': 'Defensa Central Izquierdo',
-  'cend': 'Defensa Central Derecho', 
-  'med': 'Medio Centro',
-  'lati': 'Lateral Izquierdo',
-  'latd': 'Lateral Derecho',
-  'del': 'Delantero',
-};
-
-// Percentage-based positions for true responsiveness
-const FORMATION_POSITIONS: Record<SevenASideFormation, PlayerSlot[]> = {
-  '3-2-1': [
-    { id: 1, position: { x: 50, y: 85 }, positionType: 'por' },
-    { id: 2, position: { x: 25, y: 65 }, positionType: 'ceni' },
-    { id: 3, position: { x: 50, y: 65 }, positionType: 'med' },
-    { id: 4, position: { x: 75, y: 65 }, positionType: 'cend' },
-    { id: 5, position: { x: 35, y: 45 }, positionType: 'lati' },
-    { id: 6, position: { x: 65, y: 45 }, positionType: 'latd' },
-    { id: 7, position: { x: 50, y: 25 }, positionType: 'del' }
-  ],
-  '2-3-1': [
-    { id: 1, position: { x: 50, y: 85 }, positionType: 'por' },
-    { id: 2, position: { x: 30, y: 65 }, positionType: 'ceni' },
-    { id: 3, position: { x: 70, y: 65 }, positionType: 'cend' },
-    { id: 4, position: { x: 20, y: 45 }, positionType: 'lati' },
-    { id: 5, position: { x: 50, y: 45 }, positionType: 'med' },
-    { id: 6, position: { x: 80, y: 45 }, positionType: 'latd' },
-    { id: 7, position: { x: 50, y: 25 }, positionType: 'del' }
-  ],
-};
+import { PlayerShort } from '../../core/interfaces/player.interface';
+import { MatchResponse } from '../../core/interfaces/match.interface';
+import { ApiSuccessResponse, PaginatedResponse } from '../../core/interfaces';
+import { FORMATION_POSITIONS, POSITION_DISPLAY_NAMES, SevenASideFormation, PlayerSlot } from './pitch-config';
 
 @Component({
   selector: 'admin-lineup-pitch',
   standalone: true,
   templateUrl: './admin-lineup-pitch.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [CommonModule]
 })
 export class AdminLineupPitchComponent {
+
+  private readonly playerService = inject(PlayerService);
+  private readonly matchService = inject(MatchService);
+
+  @Output() saveLineup = new EventEmitter<{
+    matchId: number;
+    formation: SevenASideFormation;
+    lineup: Array<{ position: string; player_id: number; match_id: number; starting: boolean }>;
+  }>();
+
+  // --- State ---
+  protected readonly substitutes = signal<Array<{ playerId?: number; playerName?: string }>>(Array(7).fill({}));
+  protected readonly showPlayerModal = signal<{ open: boolean; slotId: number | null }>({ open: false, slotId: null });
+  protected readonly players = signal<PlayerShort[]>([]);
   protected readonly formation = signal<SevenASideFormation>('3-2-1');
   protected readonly playerSlots = signal<PlayerSlot[]>(FORMATION_POSITIONS['3-2-1']);
+  protected readonly lineupState = signal<Array<{ position: string; playerName: string; playerId: number; slotId: number }>>([]);
+  protected readonly matchOptions = signal<MatchResponse[]>([]);
+  protected readonly selectedMatchId = signal<number | null>(null);
 
-  // Computed values
-  protected readonly availableFormations = computed(() => 
-    Object.keys(FORMATION_POSITIONS) as SevenASideFormation[]
+  // --- Computed values ---
+  protected readonly availableFormations = computed(
+    () => Object.keys(FORMATION_POSITIONS) as SevenASideFormation[]
   );
 
-  protected readonly selectedPlayersCount = computed(() => 
-    this.playerSlots().filter(slot => slot.playerName).length
+  protected readonly selectedPlayersCount = computed(
+    () => this.playerSlots().filter(slot => !!slot.playerId).length
   );
 
-  setFormation(formation: SevenASideFormation) {
-    this.formation.set(formation);
-    this.playerSlots.set(FORMATION_POSITIONS[formation]);
+  protected readonly canSaveLineup = computed(
+    () => this.selectedPlayersCount() === 7 && !!this.selectedMatchId()
+  );
+
+  constructor() {
+    this.loadPlayers();
+    this.loadMatches();
   }
 
-  onSlotClick(slotId: number) {
-    console.log('Slot clicked:', slotId);
-    
-    // Temporary: Add placeholder player name
-    const updatedSlots = this.playerSlots().map(slot => 
-      slot.id === slotId && !slot.playerName 
-        ? { ...slot, playerName: `Player ${slot.id}` }
-        : slot
+  // --- Lifecycle fetching ---
+  private loadPlayers(): void {
+    this.playerService.getPlayers().subscribe({
+      next: resp => this.players.set(resp.items || []),
+      error: () => this.players.set([])
+    });
+  }
+
+  private loadMatches(): void {
+    this.matchService.getMatches().subscribe({
+      next: (resp: ApiSuccessResponse<PaginatedResponse<MatchResponse>>) =>
+        this.matchOptions.set(
+          (resp.data.items || []).filter(m => ['scheduled', 'in_progress'].includes(m.status))
+        ),
+      error: () => this.matchOptions.set([])
+    });
+  }
+
+  // --- TrackBy functions ---
+  protected trackByFormation(_: number, form: SevenASideFormation): string {
+    return form;
+  }
+
+  protected trackByMatchId(_: number, match: MatchResponse): number {
+    return match.id;
+  }
+
+  // --- Slot Handlers ---
+  protected setFormation(formation: SevenASideFormation): void {
+    this.formation.set(formation);
+    this.playerSlots.set(FORMATION_POSITIONS[formation]);
+    this.lineupState.set([]);
+  }
+
+  protected onSlotClick(slotId: number): void {
+    this.openPlayerModal(slotId);
+  }
+
+  protected removePitchPlayer(slotId: number): void {
+    this.playerSlots.set(
+      this.playerSlots().map(slot =>
+        slot.id === slotId ? { ...slot, playerId: undefined, playerName: undefined } : slot
+      )
+    );
+    this.lineupState.set(this.lineupState().filter(s => s.slotId !== slotId));
+  }
+
+  private updateSlot(slotId: number, player: PlayerShort): void {
+    const updatedSlots = this.playerSlots().map(slot =>
+      slot.id === slotId ? { ...slot, playerId: player.id, playerName: player.nick_name } : slot
     );
     this.playerSlots.set(updatedSlots);
+    this.updateLineupState(updatedSlots, slotId);
+  }
+
+  protected onMatchChange(matchId: string): void {
+  this.selectedMatchId.set(Number(matchId));
+}
+
+  protected onSubSlotClick(subIdx: number): void {
+    this.openPlayerModal(-(subIdx + 1));
+  }
+
+  protected removeSubPlayer(subIdx: number): void {
+    const updatedSubs = [...this.substitutes()];
+    updatedSubs[subIdx] = {};
+    this.substitutes.set(updatedSubs);
+  }
+
+  // --- Player selection ---
+  protected onPlayerSelected(player: PlayerShort): void {
+    const slotId = this.showPlayerModal().slotId;
+    if (!slotId || this.isPlayerAlreadySelectedAnywhere(player.id)) return;
+
+    if (slotId < 0) {
+      this.assignSubPlayer(-slotId - 1, player);
+    } else {
+      this.updateSlot(slotId, player);
+    }
+    this.closePlayerModal();
+  }
+
+  private assignSubPlayer(subIdx: number, player: PlayerShort): void {
+    const updatedSubs = [...this.substitutes()];
+    updatedSubs[subIdx] = { playerId: player.id, playerName: player.nick_name };
+    this.substitutes.set(updatedSubs);
+  }
+
+  private updateLineupState(slots: PlayerSlot[], slotId: number): void {
+    const slot = slots.find(s => s.id === slotId);
+    if (!slot?.playerId || !slot.playerName) return;
+
+    this.lineupState.set([
+      ...this.lineupState().filter(s => s.slotId !== slotId),
+      { position: slot.positionType, playerName: slot.playerName, playerId: slot.playerId, slotId }
+    ]);
+  }
+
+  // --- Save ---
+  protected onSaveLineup(): void {
+    if (!this.canSaveLineup()) return;
+
+    const matchId = this.selectedMatchId()!;
+
+    // Starters: from lineupState, map to backend DTO
+    const starters = this.lineupState().map(s => ({
+      position: s.position,
+      player_id: s.playerId,
+      match_id: matchId,
+      starting: true
+    }));
+
+    // Subs: from substitutes, map to backend DTO
+    const subs = this.substitutes()
+      .map((sub) => {
+        if (!sub.playerId) return null;
+        const player = this.players().find(p => p.id === sub.playerId);
+        return player ? {
+          position: player.position,
+          player_id: sub.playerId,
+          match_id: matchId,
+          starting: false
+        } : null;
+      })
+      .filter(Boolean) as Array<{ position: string; player_id: number; match_id: number; starting: boolean }>;
+
+    this.saveLineup.emit({
+      matchId,
+      formation: this.formation(),
+      lineup: [...starters, ...subs]
+    });
+  }
+
+  // --- Modal helpers ---
+  protected openPlayerModal(slotId: number): void {
+    this.showPlayerModal.set({ open: true, slotId });
+  }
+
+  protected closePlayerModal(): void {
+    this.showPlayerModal.set({ open: false, slotId: null });
+  }
+
+  // --- Utilities ---
+  protected isPlayerAlreadySelectedAnywhere(playerId: number): boolean {
+    return this.playerSlots().some(slot => slot.playerId === playerId) ||
+           this.substitutes().some(sub => sub.playerId === playerId);
   }
 
   protected getSlotAriaLabel(slot: PlayerSlot, index: number): string {
-    const positionName = POSITION_DISPLAY_NAMES[slot.positionType] || slot.positionType;
-    
-    if (slot.playerName) {
-      return `Change ${positionName} position ${index + 1}: ${slot.playerName}`;
-    }
-    return `Select player for ${positionName} position ${index + 1}`;
+    const positionName = POSITION_DISPLAY_NAMES[slot.positionType] ?? slot.positionType;
+    return slot.playerName
+      ? `Change ${positionName} position ${index + 1}: ${slot.playerName}`
+      : `Select player for ${positionName} position ${index + 1}`;
   }
 
   protected getPlayerInitials(playerName: string): string {

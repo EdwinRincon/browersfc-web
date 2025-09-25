@@ -4,10 +4,6 @@
       <h1 class="text-2xl lg:text-3xl font-bold text-browers-black mb-2">Lineup Management</h1>
       <p class="text-browers-steel-grey">Manage team lineups and formations</p>
     </div>
-    <button mat-flat-button color="primary" class="mt-4 lg:mt-0 bg-browers-deep-purple hover:bg-browers-purple" (click)="addLineup()">
-      <mat-icon>add</mat-icon>
-      Add Lineup
-    </button>
   </div>
 
   @if (loading()) {
@@ -199,17 +195,13 @@
     </div>
     
       <!-- 7-a-side Pitch Builder (always visible) -->
-      <admin-lineup-pitch />
+      <admin-lineup-pitch (saveLineup)="onSaveLineup($event)" />
 
   @if ((dataSource.data || []).length === 0 && !loading()) {
       <div class="text-center py-12">
         <mat-icon class="text-browers-silver text-6xl mb-4">group</mat-icon>
         <h3 class="text-xl font-medium text-browers-black mb-2">No lineups found</h3>
         <p class="text-browers-steel-grey mb-6">Get started by creating your first lineup.</p>
-        <button mat-flat-button color="primary" class="bg-browers-deep-purple hover:bg-browers-purple" (click)="addLineup()">
-          <mat-icon>add</mat-icon>
-          Create First Lineup
-        </button>
       </div>
     }
   }

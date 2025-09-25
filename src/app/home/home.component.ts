@@ -27,10 +27,10 @@ export class HomeComponent implements OnInit {
 
   private loadArticles(): void {
     this.isLoading.set(true);
-    this.articleService.getAllArticles()
+    this.articleService.getArticles({ page: 0, pageSize: 6, sort: 'date', order: 'desc' })
       .subscribe({
-        next: (articles) => {
-          this.articles.set(articles);
+        next: (resp: any) => {
+          this.articles.set(resp.data?.items || []);
           this.isLoading.set(false);
         },
         error: () => {

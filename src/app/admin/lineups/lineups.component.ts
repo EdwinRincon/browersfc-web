@@ -3,12 +3,14 @@ import { CommonModule } from '@angular/common';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatSort, Sort } from '@angular/material/sort';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { MaterialModule } from '../../material/material.module';
 import { LineupService } from '../../services/lineup/lineup.service';
 import { LineupResponse, PaginationParams, ApiSuccessResponse, PaginatedResponse } from '../../core/interfaces';
 import { AdminLineupPitchComponent } from './admin-lineup-pitch.component';
-
-
+import { PlayerPosition, PlayerShort } from '../../core/interfaces/player.interface';
+import { forkJoin } from 'rxjs';
+import { finalize } from 'rxjs/operators';
 
 @Component({
   selector: 'app-lineups',
@@ -24,6 +26,7 @@ import { AdminLineupPitchComponent } from './admin-lineup-pitch.component';
 export class LineupsComponent implements OnInit, AfterViewInit {
   private readonly lineupService = inject(LineupService);
   private readonly cdr = inject(ChangeDetectorRef);
+  private readonly snackBar = inject(MatSnackBar);
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
@@ -37,11 +40,9 @@ export class LineupsComponent implements OnInit, AfterViewInit {
   protected readonly pageSize = signal<number>(10);
   protected readonly currentPage = signal<number>(0);
 
-  // Table configuration
   protected readonly displayedColumns = ['id', 'match', 'player', 'position', 'starting', 'actions'];
   protected readonly pageSizeOptions = [5, 10, 25, 50];
 
-  // Pagination parameters using interface
   protected readonly paginationParams = signal<PaginationParams>({
     page: 0,
     pageSize: 10,
@@ -70,28 +71,30 @@ export class LineupsComponent implements OnInit, AfterViewInit {
   protected loadLineups(): void {
     this.loading.set(true);
     this.error.set(null);
+
     const params = this.paginationParams();
-    this.lineupService.getLineups(params).subscribe({
-      next: (response: ApiSuccessResponse<PaginatedResponse<LineupResponse>>) => {
-        const data = response.data;
-        this.dataSource.data = data.items || [];
-        this.totalCount.set(data.total_count || 0);
-        this.pageSize.set(params.pageSize);
-        this.currentPage.set(params.page);
-        setTimeout(() => {
-          if (this.paginator) {
-            this.paginator.pageIndex = params.page;
-            this.paginator.length = data.total_count || 0;
-            this.cdr.detectChanges();
-          }
-        }, 0);
-        this.loading.set(false);
-      },
-      error: (err) => {
-        this.error.set('Error loading lineups. Please try again.');
-        this.loading.set(false);
-      }
-    });
+    this.lineupService.getLineups(params)
+      .pipe(finalize(() => this.loading.set(false)))
+      .subscribe({
+        next: (response: ApiSuccessResponse<PaginatedResponse<LineupResponse>>) => {
+          const data = response.data;
+          this.dataSource.data = data.items || [];
+          this.totalCount.set(data.total_count || 0);
+          this.pageSize.set(params.pageSize);
+          this.currentPage.set(params.page);
+
+          setTimeout(() => {
+            if (this.paginator) {
+              this.paginator.pageIndex = params.page;
+              this.paginator.length = data.total_count || 0;
+              this.cdr.detectChanges(); // ensure OnPush refresh
+            }
+          }, 0);
+        },
+        error: () => {
+          this.error.set('Error loading lineups. Please try again.');
+        }
+      });
   }
 
   protected onPageChange(event: PageEvent): void {
@@ -122,8 +125,6 @@ export class LineupsComponent implements OnInit, AfterViewInit {
     this.loadLineups();
   }
 
-
-
   protected getPositionColor(position: string): string {
     const colors: Record<string, string> = {
       'por': 'bg-yellow-100 text-yellow-800',
@@ -138,22 +139,71 @@ export class LineupsComponent implements OnInit, AfterViewInit {
     };
     return colors[position] || 'bg-gray-100 text-gray-800';
   }
-  protected addLineup(): void {
-    // TODO: Implement add functionality
-    console.log('Add new lineup');
-  }
+
 
   protected editLineup(lineup: LineupResponse): void {
-    // TODO: Implement edit functionality
     console.log('Edit lineup:', lineup);
   }
 
   protected deleteLineup(lineup: LineupResponse): void {
-    // TODO: Implement delete functionality
     console.log('Delete lineup:', lineup);
   }
 
   protected refreshData(): void {
     this.loadLineups();
+  }
+
+  protected onSaveLineup(event: {
+    matchId: number;
+    formation: string;
+    lineup: Array<{ position: string; player_id: number; match_id: number; starting: boolean }>
+  }) {
+    this.loading.set(true);
+    this.error.set(null);
+
+    // Directly use the provided lineup array, which is already in backend format
+    const requests = event.lineup.map(slot =>
+      this.lineupService.createLineup({
+        position: slot.position as PlayerPosition,
+        player_id: slot.player_id,
+        match_id: slot.match_id,
+        starting: slot.starting
+      })
+    );
+
+    forkJoin(requests)
+      .pipe(finalize(() => this.loading.set(false)))
+      .subscribe({
+        next: () => {
+          this.loadLineups();
+          this.error.set(null);
+          this.snackBar.open('Lineup saved successfully!', 'Close', {
+            duration: 3000,
+            panelClass: ['bg-browers-deep-purple', 'text-browers-white', 'font-semibold']
+          });
+        },
+        error: (err) => {
+          const msg = 'Error saving lineup.' + (err?.message ? ` ${err.message}` : '');
+          this.error.set(msg);
+        }
+      });
+  }
+
+  /** Unique players with Set for efficiency */
+  private extractAllPlayers(): PlayerShort[] {
+    if (!this.dataSource.data?.length) return [];
+
+    const seen = new Set<number>();
+    return this.dataSource.data
+      .filter(item => item.player && !seen.has(item.player.id))
+      .map(item => {
+        seen.add(item.player!.id);
+        return item.player!;
+      });
+  }
+
+  /** Map player name → playerId */
+  private mapPlayerNameToId(playerName: string, allPlayers: PlayerShort[]): number | undefined {
+    return playerName ? allPlayers.find(p => p.nick_name === playerName)?.id : undefined;
   }
 }

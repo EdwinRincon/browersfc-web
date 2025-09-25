@@ -1,15 +1,12 @@
-import { Injectable, inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { Injectable, inject, Signal } from '@angular/core';
+import { HttpClient, httpResource } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
-
 import { environment } from '../../../environments/environment';
 import {
   ArticleResponse,
   ArticleShort,
   CreateArticleRequest,
   UpdateArticleRequest,
-  ApiSuccessResponse,
   PaginatedResponse,
   PaginationParams
 } from '../../core/interfaces';
@@ -23,7 +20,7 @@ export class ArticleService {
   private readonly adminBaseUrl = `${environment.API_URL}/admin/articles`;
 
   /**
-   * Get paginated articles with sorting and filtering
+   * Get paginated articles with optional sorting
    */
   getArticles(params: PaginationParams): Observable<PaginatedResponse<ArticleResponse>> {
     const queryParams = {
@@ -33,11 +30,8 @@ export class ArticleService {
       order: params.order || 'desc'
     };
 
-    return this.http.get<ApiSuccessResponse<PaginatedResponse<ArticleResponse>>>(
-      this.baseUrl,
-      { params: queryParams }
-    ).pipe(
-      map(response => response.data)
+    return this.http.get<PaginatedResponse<ArticleResponse>>(
+      this.baseUrl, { params: queryParams }
     );
   }
 
@@ -45,35 +39,21 @@ export class ArticleService {
    * Get a specific article by ID
    */
   getArticleById(id: number): Observable<ArticleResponse> {
-    return this.http.get<ApiSuccessResponse<ArticleResponse>>(
-      `${this.baseUrl}/${id}`
-    ).pipe(
-      map(response => response.data)
-    );
+    return this.http.get<ArticleResponse>(`${this.baseUrl}/${id}`);
   }
 
   /**
    * Create a new article (admin only)
    */
   createArticle(articleData: CreateArticleRequest): Observable<ArticleShort> {
-    return this.http.post<ApiSuccessResponse<ArticleShort>>(
-      this.adminBaseUrl,
-      articleData
-    ).pipe(
-      map(response => response.data)
-    );
+    return this.http.post<ArticleShort>(this.adminBaseUrl,articleData);
   }
 
   /**
    * Update an existing article (admin only)
    */
   updateArticle(id: number, articleData: UpdateArticleRequest): Observable<ArticleShort> {
-    return this.http.put<ApiSuccessResponse<ArticleShort>>(
-      `${this.adminBaseUrl}/${id}`,
-      articleData
-    ).pipe(
-      map(response => response.data)
-    );
+    return this.http.put<ArticleShort>(`${this.adminBaseUrl}/${id}`,articleData);
   }
 
   /**
@@ -84,11 +64,31 @@ export class ArticleService {
   }
 
   /**
-   * Get all articles for dropdown/select purposes
+   * Get all articles
    */
-  getAllArticles(): Observable<ArticleResponse[]> {
-    return this.getArticles({ page: 0, pageSize: 6, sort: 'date', order: 'desc' }).pipe(
-      map(response => response.items)
-    );
+  /**
+   * Use this.articlesResource.value()?.data?.items to access articles
+   */
+  readonly articlesResource = httpResource<{ data: PaginatedResponse<ArticleResponse> }>(() => ({
+    url: this.baseUrl,
+    params: { page: '0', pageSize: '6', sort: 'date', order: 'desc' }
+  }));
+
+
+  /**
+ * Factory for signal-powered paginated articles resource
+ */
+  getArticlesResource(paginationParams: Signal<PaginationParams>) {
+    return httpResource<{ data: PaginatedResponse<ArticleResponse> }>(() => ({
+      url: this.baseUrl,
+      method: 'GET',
+      params: {
+        page: paginationParams().page.toString(),
+        pageSize: paginationParams().pageSize.toString(),
+        sort: paginationParams().sort ?? 'date',
+        order: paginationParams().order ?? 'desc'
+      }
+    }));
   }
+
 }

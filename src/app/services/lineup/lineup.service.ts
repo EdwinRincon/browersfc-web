@@ -17,6 +17,7 @@ import { environment } from '../../../environments/environment';
 export class LineupService {
   private readonly http = inject(HttpClient);
   private readonly apiUrl = `${environment.API_URL}/lineups`;
+  private readonly adminApiUrl = `${environment.API_URL}/admin/lineups`;
 
   getLineups(pagination?: PaginationParams): Observable<ApiSuccessResponse<PaginatedResponse<LineupResponse>>> {
     let url = this.apiUrl;
@@ -38,16 +39,19 @@ export class LineupService {
     return this.http.get<ApiSuccessResponse<LineupResponse>>(`${this.apiUrl}/${id}`);
   }
 
+
   createLineup(lineup: CreateLineupRequest): Observable<ApiSuccessResponse<LineupResponse>> {
-    return this.http.post<ApiSuccessResponse<LineupResponse>>(this.apiUrl, lineup);
+    return this.http.post<ApiSuccessResponse<LineupResponse>>(this.adminApiUrl, lineup);
   }
+
 
   updateLineup(id: number, lineup: UpdateLineupRequest): Observable<ApiSuccessResponse<LineupResponse>> {
-    return this.http.put<ApiSuccessResponse<LineupResponse>>(`${this.apiUrl}/${id}`, lineup);
+    return this.http.put<ApiSuccessResponse<LineupResponse>>(`${this.adminApiUrl}/${id}`, lineup);
   }
 
+
   deleteLineup(id: number): Observable<ApiSuccessResponse<void>> {
-    return this.http.delete<ApiSuccessResponse<void>>(`${this.apiUrl}/${id}`);
+    return this.http.delete<ApiSuccessResponse<void>>(`${this.adminApiUrl}/${id}`);
   }
 
   getAllLineups(): Observable<ApiSuccessResponse<LineupResponse[]>> {

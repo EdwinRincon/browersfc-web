@@ -1,64 +1,146 @@
 <section class="w-full flex flex-col items-center p-4">
-  <!-- Formation Indicator -->
-  <div class="w-full max-w-md mb-6">
-    <div class="bg-browers-deep-purple text-browers-white text-sm font-medium px-6 py-3 rounded-lg shadow-md flex items-center justify-between">
-      
-      <!-- Formation Selector -->
-      <select
-        class="px-3 py-2 rounded text-sm font-medium border border-browers-silver bg-browers-white text-browers-black 
-               focus:outline-none focus:border-browers-lavender focus:ring-2 focus:ring-browers-lavender 
-               transition-colors cursor-pointer"
-        [value]="formation()" 
-        (change)="setFormation($any($event.target).value)"
-        aria-label="Select formation"
-      >
-        @for (form of availableFormations(); track form) {
-          <option [value]="form">{{ form }}</option>
-        }
-      </select>
+  <!-- Formation & Match Selection: Mobile-first responsive container -->
+  <div class="w-full max-w-md mb-6 space-y-4 px-4 sm:px-0">
 
-      <!-- Players count -->
-      <span class="text-browers-lavender font-semibold whitespace-nowrap ml-4">
-        {{ selectedPlayersCount() }}/7 Players
-      </span>
+    <div class="bg-browers-deep-purple text-browers-white text-sm font-medium rounded-lg shadow-md p-4 space-y-4">
+
+      <!-- First row: match select alone -->
+      <div class="flex flex-col sm:flex-row items-center justify-between gap-3">
+        <select id="match-select"
+          class="w-full sm:w-auto flex-1 min-w-[200px] px-3 py-2 rounded text-sm font-medium border border-browers-silver bg-browers-white text-browers-black 
+               focus:outline-none focus:border-browers-lavender focus:ring-2 focus:ring-browers-lavender transition-colors cursor-pointer"
+          [value]="selectedMatchId() ?? ''" (change)="onMatchChange($any($event.target).value)"
+          aria-label="Select a match">
+          <option value="" disabled>Select a match</option>
+          <option *ngFor="let match of matchOptions(); trackBy: trackByMatchId" [value]="match.id">
+            {{ match.location }} - {{ match.kickoff | date:'MMM d, y HH:mm' }}
+          </option>
+        </select>
+      </div>
+
+      <!-- Second row: formation select + player count + save button -->
+      <div class="flex flex-col sm:flex-row items-center justify-between gap-3">
+
+        <label for="formation-select" class="sr-only">Select formation</label>
+        <select id="formation-select"
+          class="w-full sm:w-auto flex-1 min-w-[140px] px-3 py-2 rounded text-sm font-medium border border-browers-silver bg-browers-white text-browers-black 
+               focus:outline-none focus:border-browers-lavender focus:ring-2 focus:ring-browers-lavender transition-colors cursor-pointer"
+          [value]="formation()" (change)="setFormation($any($event.target).value)" aria-label="Select formation">
+          <option *ngFor="let form of availableFormations(); trackBy: trackByFormation" [value]="form">{{ form }}
+          </option>
+        </select>
+
+        <span class="text-browers-lavender font-normal whitespace-nowrap flex-shrink-0 mt-2 sm:mt-0 sm:ml-4"
+          aria-live="polite" aria-atomic="true">
+          {{ selectedPlayersCount() }}/7 Players
+        </span>
+
+        <button class="bg-browers-lavender text-browers-white font-normal px-6 py-2 rounded-lg shadow 
+            hover:bg-browers-purple transition focus-visible:outline 
+            focus-visible:outline-offset-2 focus-visible:outline-browers-lavender disabled:opacity-50 disabled:cursor-not-allowed
+            mt-2 sm:mt-0 sm:ml-4" [disabled]="!canSaveLineup()" type="button" (click)="onSaveLineup()"
+          aria-disabled="{{!canSaveLineup()}}">
+          Save Lineup
+        </button>
+      </div>
+
     </div>
   </div>
 
+
+
+
   <!-- Soccer Pitch Container -->
-  <div class="relative w-full max-w-md aspect-[3/4] bg-gradient-to-br from-green-600 to-green-700 rounded-2xl border-4 border-green-800 shadow-2xl overflow-hidden">
-    
+  <div
+    class="relative w-full max-w-md aspect-[3/4] bg-gradient-to-br from-green-600 to-green-700 rounded-2xl border-4 border-green-800 shadow-2xl overflow-hidden">
+
     <!-- Pitch Markings -->
     <div class="absolute inset-4 border-2 border-green-300/50 border-dashed rounded-lg"></div>
     <div class="absolute top-1/2 left-0 right-0 border-t-2 border-green-300/50 border-dashed"></div>
-    <div class="absolute top-1/2 left-1/2 w-3 h-3 border-2 border-green-300/50 rounded-full -translate-x-1/2 -translate-y-1/2"></div>
+    <div
+      class="absolute top-1/2 left-1/2 w-3 h-3 border-2 border-green-300/50 rounded-full -translate-x-1/2 -translate-y-1/2">
+    </div>
 
     <!-- Goal Areas -->
-    <div class="absolute bottom-2 left-1/2 -translate-x-1/2 w-32 h-6 border-2 border-green-300/50 border-t-0 rounded-t-none"></div>
-    <div class="absolute top-2 left-1/2 -translate-x-1/2 w-32 h-6 border-2 border-green-300/50 border-b-0 rounded-b-none"></div>
+    <div
+      class="absolute bottom-2 left-1/2 -translate-x-1/2 w-32 h-6 border-2 border-green-300/50 border-t-0 rounded-t-none">
+    </div>
+    <div
+      class="absolute top-2 left-1/2 -translate-x-1/2 w-32 h-6 border-2 border-green-300/50 border-b-0 rounded-b-none">
+    </div>
 
     <!-- Player Slots -->
     @for (slot of playerSlots(); track slot.id; let i = $index) {
+    <div class="absolute" [style.left.%]="slot.position.x" [style.top.%]="slot.position.y"
+      style="transform: translate(-50%, -50%);">
       <button
-        class="absolute w-12 h-12 rounded-full bg-green-200/90 backdrop-blur-sm border-2 border-green-700 shadow-lg
-               flex items-center justify-center transition-all duration-200 hover:scale-110 hover:bg-green-300
-               focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-green-700
-               transform -translate-x-1/2 -translate-y-1/2"
-        [style.left.%]="slot.position.x"
-        [style.top.%]="slot.position.y"
-        [class.bg-green-400]="slot.playerName"
-        [class.border-white]="slot.playerName"
-        (click)="onSlotClick(slot.id)"
-        type="button"
-        [attr.aria-label]="getSlotAriaLabel(slot, i)"
-      >
+        class="w-12 h-12 rounded-full bg-green-200/90 backdrop-blur-sm border-2 border-green-700 shadow-lg flex items-center justify-center transition-all duration-200 hover:scale-110 hover:bg-green-300 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-green-700"
+        [class.bg-green-400]="slot.playerName" [class.border-white]="slot.playerName" (click)="onSlotClick(slot.id)"
+        type="button" [attr.aria-label]="getSlotAriaLabel(slot, i)">
         @if (slot.playerName) {
-          <span class="text-green-900 font-bold text-xs truncate px-1">
-            {{ getPlayerInitials(slot.playerName) }}
-          </span>
+        <span class="text-green-900 font-bold text-xs truncate px-1">
+          {{ getPlayerInitials(slot.playerName) }}
+        </span>
         } @else {
-          <span class="text-green-700 text-lg font-bold">+</span>
+        <span class="text-green-700 text-lg font-bold">+</span>
         }
       </button>
+      @if (slot.playerName) {
+      <button
+        class="absolute top-0 right-0 w-6 h-6 rounded-full bg-white text-browers-black border border-browers-silver flex items-center justify-center text-xs font-bold shadow focus:outline-none focus:ring-2 focus:ring-browers-lavender"
+        style="transform: translate(40%,-40%);" (click)="removePitchPlayer(slot.id); $event.stopPropagation();"
+        type="button" [attr.aria-label]="'Remove player from position ' + (i+1)">×</button>
+      }
+    </div>
     }
   </div>
+
+  <!-- Substitutes Row -->
+  <div class="w-full flex flex-col items-center mt-6">
+    <div class="w-full flex flex-wrap justify-center gap-2 sm:gap-4 md:gap-6 lg:gap-8 xl:gap-10">
+      @for (subIdx of [0,1,2,3,4,5,6]; track subIdx) {
+      <div class="relative">
+        <button
+          class="w-12 h-12 rounded-full bg-browers-light-grey border-2 border-browers-silver flex items-center justify-center shadow hover:bg-browers-lavender transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-browers-lavender focus:ring-offset-2"
+          type="button" (click)="onSubSlotClick(subIdx)"
+          [attr.aria-label]="substitutes()[subIdx].playerName ? 'Change substitute ' + (subIdx+1) + ': ' + substitutes()[subIdx].playerName : 'Select substitute player ' + (subIdx+1)">
+          @if (substitutes()[subIdx].playerName) {
+          <span class="text-browers-black font-bold text-xs truncate px-1">
+            {{ getPlayerInitials(substitutes()[subIdx].playerName || '') }}
+          </span>
+          } @else {
+          <span class="text-browers-steel-grey text-lg font-bold">+</span>
+          }
+        </button>
+        @if (substitutes()[subIdx].playerName) {
+        <button
+          class="absolute top-0 right-0 w-6 h-6 rounded-full bg-white text-browers-black border border-browers-silver flex items-center justify-center text-xs font-bold shadow focus:outline-none focus:ring-2 focus:ring-browers-lavender"
+          style="transform: translate(40%,-40%);" (click)="removeSubPlayer(subIdx); $event.stopPropagation();"
+          type="button" [attr.aria-label]="'Remove substitute player ' + (subIdx+1)">×</button>
+        }
+      </div>
+      }
+    </div>
+    <div class="mt-2 text-xs text-browers-steel-grey">Substitutes</div>
+  </div>
 </section>
+@if (showPlayerModal().open) {
+<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+  <div class="bg-browers-white rounded-xl shadow-2xl p-6 w-full max-w-sm">
+    <div class="flex justify-between items-center mb-4">
+      <h2 class="text-lg font-bold text-browers-black">Select Player</h2>
+      <button class="text-browers-dark-grey hover:text-browers-purple text-xl" (click)="closePlayerModal()"
+        aria-label="Close">&times;</button>
+    </div>
+    <div class="space-y-2 max-h-80 overflow-y-auto">
+      @for (player of players(); track player.id) {
+      <button
+        class="w-full px-4 py-2 rounded bg-browers-light-grey text-browers-black font-medium hover:bg-browers-lavender disabled:opacity-50"
+        [disabled]="isPlayerAlreadySelectedAnywhere(player.id)" (click)="onPlayerSelected(player)">
+        {{ player.nick_name }} <span class="ml-2 text-xs text-browers-steel-grey">({{ player.position }})</span>
+      </button>
+      }
+    </div>
+  </div>
+</div>
+}
